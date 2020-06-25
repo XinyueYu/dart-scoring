@@ -1,9 +1,0 @@
-npm init -y
-打开package。json，修改main为"server.js"
-npm i express ejs express-ejs-layouts
-npm i --save-dev nodemon
-打开package.json，修改scripts为
-  "scripts": {
-    "start": "node server.js",
-    "devStart": "nodemon server.js",
-  },

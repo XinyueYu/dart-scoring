@@ -1,0 +1,70 @@
+GET http://localhost:3000/users
+
+###
+
+GET http://localhost:3000/users/5ef32d4ec5fd1e65b2618e90
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "Haozhi"
+}
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "Xinyue"
+}
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "Test"
+}
+
+###
+
+DELETE http://localhost:3000/users/5ef458b25ef2150e5c2cc36e
+
+###
+
+PATCH http://localhost:3000/users/5ef4335593bb0903725879a5
+Content-Type: application/json
+
+{
+    "win_count": 0,
+    "total_count": 0,
+    "win_rate": null,
+    "sum": 0,
+    "total_round_count": 0,
+    "win_min_round": null,
+    "win_avg_round": null,
+    "max_3_darts": 0,
+    "avg_3_darts": null
+}
+
+###
+
+PATCH http://localhost:3000/users/5ef4335793bb0903725879a6
+Content-Type: application/json
+
+{
+    "win_count": 0,
+    "total_count": 0,
+    "win_rate": null,
+    "sum": 0,
+    "total_round_count": 0,
+    "win_min_round": null,
+    "win_avg_round": null,
+    "max_3_darts": 0,
+    "avg_3_darts": null
+}
