@@ -17,14 +17,14 @@ ul{
 }
 li{
     float: left;
-    width: 60px;
+    width: 80px;
     list-style: none;
 }
 .board{
     position: absolute;
     left: 20px;
     top: 20px;
-    width: 422px;
+    width: 506px;
     height: 100px;
     background-color: white;
     border-radius: 20px;
@@ -55,6 +55,24 @@ li{
     border-radius: 20px;
     text-align: center;
     font-weight: bold;
+}
+.user1_sum{
+    color: #e63900;
+    width: 80px;
+    font-size: 20px;
+    line-height: 44px;
+    font-weight: bold;
+    text-align: center;
+    border-right: 2px solid #e63900;
+}
+.user2_sum{
+    color: #33cc33;
+    width: 80px;
+    font-size: 20px;
+    line-height: 44px;
+    font-weight: bold;
+    text-align: center;
+    border-right: 2px solid #33cc33;
 }
 .user1_board li{
     color: #e63900;

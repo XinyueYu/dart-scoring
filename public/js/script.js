@@ -1,17 +1,18 @@
 var user1_scoreset = []
 var user2_scoreset = []
-// var user1_temp_scoreset = []
-// var user2_temp_scoreset = []
+var temp_scoreset = []
 var user1_score = 301
 var user2_score = 301
-// var user1_temp_score = 301
-// var user2_temp_score = 301
-var curscore = 0
+var user1_temp_score = 301
+var user2_temp_score = 301
+var user1_temp_sum = 0
+var user2_temp_sum = 0
 var round = 1
 var user1_round = 0
 var user2_round = 0
-// var user1_temp_count = 0 // Number of dart in this round
-// var user2_temp_count = 0 // Number of dart in this round
+var count_for_this_round = 0 // 0 to 6
+var user1_temp_count = 0 // 0 to 3
+var user2_temp_count = 0 // 0 to 3
 var wait = true
 var can_cancel_user1 = false
 var can_cancel_user2 = false
@@ -180,84 +181,159 @@ $(".user2_input").keydown(function(event){
     }
 })
 
+function log(){
+    console.log("============================================")
+    console.log("user1_scoreset: " + user1_scoreset)
+    console.log("user2_scoreset: " + user2_scoreset)
+    console.log("temp_scoreset: " + temp_scoreset)
+    console.log("user1_score: " + user1_score)
+    console.log("user2_score: " + user2_score)
+    console.log("user1_temp_score:" + user1_temp_score)
+    console.log("user2_temp_score:" + user2_temp_score)
+    console.log("user1_temp_sum: " + user1_temp_sum)
+    console.log("user2_temp_sum: " + user2_temp_sum)
+    console.log("round: " + round)
+    console.log("user1_round: " + user1_round)
+    console.log("user2_round: " + user2_round)
+    console.log("count_for_this_round: " + count_for_this_round)
+    console.log("user1_temp_count: " + user1_temp_count)
+    console.log("user2_temp_count: " + user2_temp_count)
+    console.log("can_cancel_user1: " + can_cancel_user1)
+    console.log("can_cancel_user2: " + can_cancel_user2)
+    console.log("user1_id: " + user1_id)
+    console.log("user2_id: " + user2_id)
+}
+
 $(".user1_submit").click(function(){
     if (!can_cancel_user1){
         can_cancel_user1 = true
+        can_cancel_user2 = false
     }
-    if (user1_score - $(".user1_input").val() >= 0 && $(".user1_input").val() != ""){
-        curscore = $(".user1_input").val()
-        user1_score -= curscore
+    count_for_this_round++
+    user1_temp_count++
+    let val = $(".user1_input").val() == "" ? 0 : Number($(".user1_input").val())
+    user1_temp_score -= val
+    user1_temp_sum += val
+    if (user1_temp_score < 0){ // Consider call bust()
+        user1_scoreset.push(0)
+        temp_scoreset = []
+        user1_temp_score = user1_score
+        user1_temp_sum = 0
+        user1_round++
+        count_for_this_round += (3 - user1_temp_count)
+        user1_temp_count = 0
+        $(".user1_input").val("")
+        $(".user1_score p").text(user1_score)
+        $(".user1_sum").text(user1_temp_sum)
+        $(".user1_board ul").find("li").remove()
+        for (let i = 1; i <= 3; i++){
+            $(".user1_board ul").append("<li id='user1_li_"+i+"'>"+0+"</li>") // Start from li_1
+        }
+        $(".user2_board ul").find("li").remove()
+        $(".user2_sum").text(user2_temp_sum)
+        if (count_for_this_round == 6) {
+            $(".round p").text(++round)
+            count_for_this_round = 0
+        }
     }
-    else{
-        curscore = 0
-    }
-    user1_round++
-    user1_scoreset.push(Number(curscore))
-    // if (user1_temp_count == 2){
-    //     let sum = 0
-    //     for (let i = 0; i < 2; i++){
-    //         sum += user1_temp_scoreset[i] // Consider using Number() here
-    //     }
-    //     if (user1_score - sum >= 0){
-    //         user1_score = user1_temp_score
-    //     }
-    //     user1_round++
-    //     user1_temp_count = 0
-    // }
-    // $(".user1_board ul li").eq(user1_temp_count - 1).text(curscore)
-    $(".user1_board ul").append("<li id='user1_li_"+user1_round+"'>"+curscore+"</li>") // Start from li_1
-    $(".user1_score p").text(user1_score)
-    $(".user1_input").val("")
-    $(".user1_minus").text("-"+curscore)
-    $(".user1_minus").show()
-    $(".user1_minus").animate({top:'-120px', opacity:'0.5'},600,function(){
-        $(".user1_minus").hide()
-        $(".user1_minus").css("top","-60px")
-        $(".user1_minus").css("opacity","1")
-    });
-    if (user1_score == 0){
+    else if (user1_temp_score == 0){
+        user1_scoreset.push(user1_temp_sum)
+        user1_score = user1_temp_score
+        user1_round++
+        $(".user1_input").val("")
+        $(".user1_score p").text(user1_temp_score)
+        $(".user1_sum").text(user1_temp_sum)
+        $(".user1_board ul").append("<li id='user1_li_"+user1_temp_count+"'>"+val+"</li>") // Start from li_1
         success("user1")
     }
     else{
-        if (!wait) {
-            $(".round p").text(++round)
+        temp_scoreset.push(val)
+        $(".user1_input").val("")
+        $(".user1_score p").text(user1_temp_score)
+        $(".user1_sum").text(user1_temp_sum)
+        $(".user1_board ul").append("<li id='user1_li_"+user1_temp_count+"'>"+val+"</li>") // Start from li_1
+        if (user1_temp_count == 3){
+            user1_scoreset.push(user1_temp_sum)
+            temp_scoreset = []
+            user1_score = user1_temp_score
+            user1_temp_sum = 0
+            user1_round++
+            user1_temp_count = 0
+            $(".user2_board ul").find("li").remove()
+            $(".user2_sum").text(user2_temp_sum)
         }
-        wait = !wait
+        if (count_for_this_round == 6) {
+            $(".round p").text(++round)
+            count_for_this_round = 0
+        }
     }
+    log()
 })
 
 $(".user2_submit").click(function(){
     if (!can_cancel_user2){
         can_cancel_user2 = true
+        can_cancel_user1 = false
     }
-    if (user2_score - $(".user2_input").val() >= 0 && $(".user2_input").val() != ""){
-        curscore = $(".user2_input").val()
-        user2_score -= curscore
+    count_for_this_round++
+    user2_temp_count++
+    let val = $(".user2_input").val() == "" ? 0 : Number($(".user2_input").val())
+    user2_temp_score -= val
+    user2_temp_sum += val
+    if (user2_temp_score < 0){ // Consider call bust()
+        user2_scoreset.push(0)
+        temp_scoreset = []
+        user2_temp_score = user2_score
+        user2_temp_sum = 0
+        user2_round++
+        count_for_this_round += (3 - user2_temp_count)
+        user2_temp_count = 0
+        $(".user2_input").val("")
+        $(".user2_score p").text(user2_score)
+        $(".user2_sum").text(user2_temp_sum)
+        $(".user2_board ul").find("li").remove()
+        for (let i = 1; i <= 3; i++){
+            $(".user2_board ul").append("<li id='user2_li_"+i+"'>"+0+"</li>") // Start from li_1
+        }
+        $(".user1_board ul").find("li").remove()
+        $(".user1_sum").text(user1_temp_sum)
+        if (count_for_this_round == 6) {
+            $(".round p").text(++round)
+            count_for_this_round = 0
+        }
     }
-    else{
-        curscore = 0
-    }
-    user2_round++
-    user2_scoreset.push(Number(curscore))
-    $(".user2_board ul").append("<li id='user2_li_"+user2_round+"'>"+curscore+"</li>") // Start from li_1
-    $(".user2_score p").text(user2_score)
-    $(".user2_input").val("")
-    $(".user2_minus").text("-"+curscore)
-    $(".user2_minus").show()
-    $(".user2_minus").animate({top:'-120px', opacity:'0.5'},600,function(){
-        $(".user2_minus").hide()
-        $(".user2_minus").css("top","-60px")
-        $(".user2_minus").css("opacity","1")
-    });
-    if (user2_score == 0){
+    else if (user2_temp_score == 0){
+        user2_scoreset.push(user2_temp_sum)
+        user2_score = user2_temp_score
+        user2_round++
+        $(".user2_input").val("")
+        $(".user2_score p").text(user2_temp_score)
+        $(".user2_sum").text(user2_temp_sum)
+        $(".user2_board ul").append("<li id='user2_li_"+user2_temp_count+"'>"+val+"</li>") // Start from li_1
         success("user2")
     }
     else{
-        if (!wait) {
-            $(".round p").text(++round)
+        temp_scoreset.push(val)
+        $(".user2_input").val("")
+        $(".user2_score p").text(user2_temp_score)
+        $(".user2_sum").text(user2_temp_sum)
+        $(".user2_board ul").append("<li id='user2_li_"+user2_temp_count+"'>"+val+"</li>") // Start from li_1
+        if (user2_temp_count == 3){
+            user2_scoreset.push(user2_temp_sum)
+            temp_scoreset = []
+            user2_score = user2_temp_score
+            user2_temp_sum = 0
+            user2_round++
+            user2_temp_count = 0
+            $(".user1_board ul").find("li").remove()
+            $(".user1_sum").text(user1_temp_sum)
         }
-        wait = !wait
+        if (count_for_this_round == 6) {
+            $(".round p").text(++round)
+            count_for_this_round = 0
+        }
     }
+    log()
 })
 
 // ---------------------------------------------------------
@@ -304,20 +380,10 @@ $(".user2_cancel").on("click", function(){
 })
 
 $(".user1_cancel").hover(function(){
-    if (can_cancel_user1){
-        $(this).css("cursor", "pointer")
-    }
-    else{
-        $(this).css("cursor", "default")
-    }
+    can_cancel_user1 ? $(this).css("cursor", "pointer") : $(this).css("cursor", "default")
 })
 $(".user2_cancel").hover(function(){
-    if (can_cancel_user2){
-        $(this).css("cursor", "pointer")
-    }
-    else{
-        $(this).css("cursor", "default")
-    }
+    can_cancel_user2 ? $(this).css("cursor", "pointer") : $(this).css("cursor", "default")
 })
 
 // ---------------------------------------------------------
@@ -327,30 +393,33 @@ $(".user2_cancel").hover(function(){
 $(".play_again").click(function(){
     user1_score = 301
     user2_score = 301
+    user1_temp_score = 301
+    user2_temp_score = 301
+    user1_temp_sum = 0
+    user2_temp_sum = 0
     user1_scoreset = []
     user2_scoreset = []
-    // user1_temp_scoreset = []
-    // user2_temp_scoreset = []
-    curscore = 0
+    temp_scoreset = []
     round = 1
     user1_round = 0
     user2_round = 0
-    // user1_temp_count = 0
-    // user2_temp_count = 0
+    user1_temp_count = 0
+    user2_temp_count = 0
+    count_for_this_round = 0
     wait = true
     can_cancel_user1 = false
     can_cancel_user2 = false
-    user1_id = null
-    user2_id = null
 
-    $(".mask").css("display", "none")
-    $(".end").css("display", "none")
+    $(".mask, .end").css("display", "none")
     $(".user1_score p").text(user1_score)
     $(".user2_score p").text(user2_score)
-    $(".user1_minus").text("-0")
-    $(".user2_minus").text("-0")
-    $(".user1_input").val("")
-    $(".user2_input").val("")
-    $(".round p").text("1")
+    // $(".user1_minus").text("-0")
+    // $(".user2_minus").text("-0")
+    $(".user1_input, .user2_input").val("")
+    $(".round p").text(round)
     $("ul").find("li").remove()
+    $(".user1_sum").text(user1_temp_sum)
+    $(".user2_sum").text(user2_temp_sum)
+
+    log()
 })
