@@ -20,11 +20,12 @@ li{
     width: 80px;
     list-style: none;
 }
+
 .board{
     position: absolute;
     left: 20px;
     top: 20px;
-    width: 506px;
+    width: 452px;
     height: 100px;
     background-color: white;
     border-radius: 20px;
@@ -112,27 +113,21 @@ li{
 .wrapper{
     display: flex;
 }
-.left{
+.panel{
     height: 100vh;
     width: 50vw;
     min-height: 600px;
     min-width: 500px;
-    background-color: #e63900;
     display: flex;
     align-items: center;
     justify-content: space-around;
     flex-direction: column;
 }
-.right{
-    height: 100vh;
-    width: 50vw;
-    min-height: 600px;
-    min-width: 500px;
+#panel_1{
+    background-color: #e63900;
+}
+#panel_2{
     background-color: #33cc33;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    flex-direction: column;
 }
 .user_name{
     color: white;
@@ -157,7 +152,7 @@ li{
     margin: 0;
     line-height: 160px;
 }
-.user1_minus{
+.user1_minus, .user2_minus{
     display: none;
     position: absolute;
     font-size: 60px;
@@ -165,38 +160,7 @@ li{
     right: -60px;
     top: -70px;
 }
-.user2_minus{
-    display: none;
-    position: absolute;
-    font-size: 60px;
-    color: white;
-    right: -60px;
-    top: -70px;
-}
-.user1_cancel{
-    background-color: white;
-    font-size: 24px;
-    line-height: 30px;
-    border-radius: 30px;
-    text-align: center;
-    width: 40px;
-    cursor: pointer;
-    margin-left: 10px;
-    border: 2px solid #e63900;
-    color: #e63900;
-}
-.user2_cancel{
-    background-color: white;
-    font-size: 24px;
-    line-height: 30px;
-    border-radius: 30px;
-    text-align: center;
-    width: 40px;
-    cursor: pointer;
-    margin-left: 10px;
-    border: 2px solid #33cc33;
-    color: #33cc33;
-}
+
 .user1_input, .user2_input{
     padding: 10px 40px;
     width: 200px;
@@ -248,7 +212,6 @@ li{
     margin: auto;
 }
 .end_wrap{
-    display: -webkit-flex;
     display: flex;
     align-items: center;
     justify-content: space-around;
