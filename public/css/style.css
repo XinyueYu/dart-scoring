@@ -4,21 +4,41 @@ body{
     margin: 0;
     min-height: 100vh;
 }
+p{
+    margin: 0;
+    padding: 0;
+}
 ul{
     margin: 0;
-    margin-left: 10px;
     padding: 0;
-    font-size: 20px;
-    line-height: 44px;
-    height: 44px;
-    font-weight: bold;
     text-align: center;
-    overflow: hidden;
 }
 li{
-    float: left;
-    width: 80px;
     list-style: none;
+}
+::-webkit-scrollbar-track{
+    background-color: none;
+}
+#data_card_1, #name_card_1, #history_card_1, .user1_board p{
+    background-color: firebrick;
+    color: white;
+}
+#data_card_2, #name_card_2, #history_card_2, .user2_board p{
+    background-color: forestgreen;
+    color: white;
+}
+.user1_sum, .user1_board li{
+    color: firebrick;
+}
+.user2_sum, .user2_board li{
+    color: forestgreen;
+}
+.board, .round, .user1_input, .user2_input, .user1_submit, .user2_submit{
+    background-color: linen;
+}
+.board, .round, .user1_input, .user2_input, .user1_submit, .user2_submit, .name_card, .data_card, .history_card, .play_again{
+    border-radius: 20px;
+    box-shadow: 3px 3px 6px grey;
 }
 
 .board{
@@ -27,9 +47,7 @@ li{
     top: 20px;
     width: 452px;
     height: 100px;
-    background-color: white;
     border-radius: 20px;
-    box-shadow: 2px 2px 4px grey;
     padding: 0 10px;
 }
 .board_wrap{
@@ -42,54 +60,54 @@ li{
 }
 .user1_board, .user2_board{
     width: 100%;
-    height: 44px;
+    height: 34px;
     border-radius: 20px;
     display: flex;
     align-items: center;
 }
 .user1_board p{
-    color: white;
     width: 120px;
-    background-color: #e63900;
     font-size: 24px;
     line-height: 34px;
     border-radius: 20px;
     text-align: center;
     font-weight: bold;
 }
-.user1_sum{
-    color: #e63900;
-    width: 80px;
+.user1_board ul, .user2_board ul{
+    margin-left: 10px;
     font-size: 20px;
     line-height: 44px;
+    height: 44px;
+    font-weight: bold;
+}
+.user1_board ul li, .user2_board ul li{
+    float: left;
+    width: 80px;
+}
+
+.user1_sum{
+    width: 80px;
+    font-size: 20px;
+    line-height: 34px;
     font-weight: bold;
     text-align: center;
-    border-right: 2px solid #e63900;
+    border-right: 2px solid firebrick;
 }
 .user2_sum{
-    color: #33cc33;
     width: 80px;
     font-size: 20px;
-    line-height: 44px;
+    line-height: 34px;
     font-weight: bold;
     text-align: center;
-    border-right: 2px solid #33cc33;
-}
-.user1_board li{
-    color: #e63900;
+    border-right: 2px solid forestgreen;
 }
 .user2_board p{
-    color: white;
     width: 120px;
-    background-color: #33cc33;
     font-size: 24px;
     line-height: 34px;
     border-radius: 20px;
     text-align: center;
     font-weight: bold;
-}
-.user2_board li{
-    color: #33cc33;
 }
 
 .round{
@@ -98,9 +116,7 @@ li{
     top: 20px;
     width: 100px;
     height: 100px;
-    background-color: white;
     border-radius: 100px;
-    box-shadow: 2px 2px 4px grey;
     margin: 0 10px;
 }
 .round p{
@@ -117,25 +133,68 @@ li{
     height: 100vh;
     width: 50vw;
     min-height: 600px;
-    min-width: 500px;
+    min-width: 620px;
     display: flex;
-    align-items: center;
-    justify-content: space-around;
     flex-direction: column;
 }
 #panel_1{
-    background-color: #e63900;
+    background-color: burlywood;
 }
 #panel_2{
-    background-color: #33cc33;
+    background-color: burlywood;
+}
+.main_wrap{
+    height: 86%;
+    display: flex;
+}
+.input_wrap{
+    height: 14%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+.left_panel{
+    margin-top: 120px;
+    width: 60%;
+    min-width: 360px;
+    display: flex;
+    flex-direction: column;
+}
+.name_card{
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    margin: 20px;
+}
+.data_card{
+    height: 60%;
+    margin: 20px;
+    margin-top: 0;
+    padding: 10px 20px;
+    font-size: 18px;
+}
+.history_card{
+    width: 40%;
+    min-width: 200px;
+    display: flex;
+    margin: 140px 20px 20px 0;
+    text-align: center;
+    font-size: 18px;
+    padding: 10px 20px;
+    overflow-y: auto;
+}
+.user1_his_round, .user2_his_round, .user1_his_score, .user2_his_score{
+    width: 50%;
+}
+.user1_his_round ul, .user2_his_round ul, .user1_his_score ul, .user2_his_score ul{
+    text-align: center;
 }
 .user_name{
-    color: white;
-    font-size: 40px;
+    font-size: 32px;
     margin: 0;
     width: 100%;
     text-align: center;
-    padding-top: 100px;
 }
 .score_wrap{
     display: flex;
@@ -147,10 +206,8 @@ li{
     position: relative;
 }
 .user1_score p, .user2_score p{
-    color: white;
-    font-size: 160px;
-    margin: 0;
-    line-height: 160px;
+    font-size: 100px;
+    line-height: 100px;
 }
 .user1_minus, .user2_minus{
     display: none;
@@ -161,33 +218,23 @@ li{
     top: -70px;
 }
 
+.user1_input, .user2_input, .user1_submit, .user2_submit{
+    text-align: center;
+    border: 0px;
+    font-size: 30px;
+    outline: none;
+}
+
 .user1_input, .user2_input{
     padding: 10px 40px;
     width: 200px;
-    border: 0px;
-    border-radius: 20px;
-    text-align: center;
     line-height: 30px;
-    font-size: 30px;
-    outline: none;
-    box-shadow: 2px 2px 4px #777777;
-}
-.input_wrap{
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 .user1_submit, .user2_submit{
-    border: 0px;
-    border-radius: 20px;
-    text-align: center;
     padding: 10px 20px;
     margin-left: 16px;
-    font-size: 30px;
     line-height: 34px;
-    outline: none;
     cursor: pointer;
-    box-shadow: 2px 2px 4px #777777;
 }
 
 .mask{
@@ -199,7 +246,6 @@ li{
 }
 .end{
     display: none;
-    border: 4px solid #ffffe6;
     border-radius: 20px;
     width: 500px;
     height: 300px;
@@ -210,6 +256,7 @@ li{
     top: 0;
     bottom: 0;
     margin: auto;
+    font-size: 32px;
 }
 .end_wrap{
     display: flex;
@@ -218,19 +265,10 @@ li{
     flex-direction: column;
     height: 100%;
 }
-.end_text{
-    font-size: 32px;
-    margin: 0;
-}
 .play_again{
     text-align: center;
-    font-size: 32px;
-    margin: 0;
-    border-radius: 20px;
     color: white;
-    background-color: #ffffe6;
     width: 200px;
     padding: 10px 40px;
-    box-shadow: 3px 3px 8px #777777;
     cursor: pointer;
 }

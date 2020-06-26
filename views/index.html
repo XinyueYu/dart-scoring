@@ -10,12 +10,12 @@
 	<div class="board">
 		<div class="board_wrap">
 			<div class="user1_board">
-				<p>Haozhi</p>
+				<p>User 1</p>
 				<div class="user1_sum">0</div>
 				<ul></ul>
 			</div>
 			<div class="user2_board">
-				<p>Xinyue</p>
+				<p>User 2</p>
 				<div class="user2_sum">0</div>
 				<ul></ul>
 			</div>
@@ -26,11 +26,34 @@
 	</div>
 	<div class="wrapper">
 		<div class="panel" id="panel_1">
-			<p class="user_name">Haozhi Yu</p>
-			<div class="score_wrap">
-				<div class="user1_score">
-					<p>301</p>
-					<div class="user1_minus">-0</div>
+			<div class="main_wrap">
+				<div class="left_panel">
+					<div class="name_card" id="name_card_1">
+						<p class="user_name" id="user_name_1">User 1</p>
+						<div class="score_wrap">
+							<div class="user1_score">
+								<p>301</p>
+								<div class="user1_minus">-0</div>
+							</div>
+						</div>
+					</div>
+					<div class="data_card" id="data_card_1">
+						<div>Rate of Winning: <span></span></div>
+						<div>Min Round of Winning: <span></span></div>
+						<div>Avg Round of Winning: <span></span></div>
+						<div>Max Score of 3 Darts: <span></span></div>
+						<div>Avg Score of 3 Darts: <span></span></div>
+					</div>
+				</div>
+				<div class="history_card" id="history_card_1">
+					<div class="user1_his_round">
+						<p>Round</p>
+						<ul></ul>
+					</div>
+					<div class="user1_his_score">
+						<p>Score</p>
+						<ul></ul>
+					</div>
 				</div>
 			</div>
 			<div class="input_wrap">
@@ -39,11 +62,34 @@
 			</div>
 		</div>
 		<div class="panel" id="panel_2">
-			<p class="user_name">Xinyue Yu</p>
-			<div class="score_wrap">
-				<div class="user2_score">
-					<p>301</p>
-					<div class="user2_minus">-0</div>
+			<div class="main_wrap">
+				<div class="left_panel">
+					<div class="name_card" id="name_card_2">
+						<p class="user_name" id="user_name_2">User 2</p>
+						<div class="score_wrap">
+							<div class="user2_score">
+								<p>301</p>
+								<div class="user2_minus">-0</div>
+							</div>
+						</div>
+					</div>
+					<div class="data_card" id="data_card_2">
+						<div>Rate of Winning: <span></span></div>
+						<div>Min Round of Winning: <span></span></div>
+						<div>Avg Round of Winning: <span></span></div>
+						<div>Max Score of 3 Darts: <span></span></div>
+						<div>Avg Score of 3 Darts: <span></span></div>
+					</div>
+				</div>
+				<div class="history_card" id="history_card_2">
+					<div class="user2_his_round">
+						<p>Round</p>
+						<ul></ul>
+					</div>
+					<div class="user2_his_score">
+						<p>Score</p>
+						<ul></ul>
+					</div>
 				</div>
 			</div>
 			<div class="input_wrap">
@@ -55,8 +101,8 @@
 	</div>
 	<div class="end">
 		<div class="end_wrap">
-			<p class="end_text">Game Over!</p>
-			<p class="end_text">Winner: <span id="winner"></span></p>
+			<p>Game Over!</p>
+			<p>Winner: <span id="winner"></span></p>
 			<div class="play_again">Play Again</div>
 		</div>
 	</div>

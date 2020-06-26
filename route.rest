@@ -28,12 +28,21 @@ POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-    "name": "Test"
+    "name": "Test1"
 }
 
 ###
 
-DELETE http://localhost:3000/users/5ef458b25ef2150e5c2cc36e
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "Test2"
+}
+
+###
+
+DELETE http://localhost:3000/users/5ef463c591a92511c6807176
 
 ###
 
