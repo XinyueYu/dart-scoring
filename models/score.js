@@ -12,9 +12,4 @@ const scoreSchema = new mongoose.Schema({
     }]
 })
 
-scoreSchema.pre('validate', function (next) {
-    this.score_count = this.scores.length
-    next();
-});
-
 module.exports = mongoose.model('Score', scoreSchema)

@@ -27,7 +27,7 @@ var user2_data = {
     bullseye: 0
 }
 var temp_scores = [] // scores of three darts in this round
-var temp_tags = []
+var temp_tags = [] // scores of three tags in this round
 var temp_sum = 0 // sum of three darts in this round
 var round = 1
 var count_this_round = 0 // 0 to 6
@@ -169,7 +169,7 @@ function success(user){
         update_data["double"] = data.double + user1_data.double
         update_data["triple"] = data.triple + user1_data.triple
         update_data["missed"] = data.missed + user1_data.missed
-        update_data["bust"] = data.bust + user2_data.bust
+        update_data["bust"] = data.bust + user1_data.bust
         update_data["bullseye"] = data.bullseye + user1_data.bullseye
 
         $.ajax({
@@ -275,8 +275,10 @@ function success(user){
             url: '/scores/' + user1_mongo.scoreId,
             type: 'PATCH',
             data: JSON.stringify({
-                "score": user1_data.scores[i],
-                "tag": user1_data.tags[i]
+                "scores": {
+                    "score": user1_data.scores[i],
+                    "tag": user1_data.tags[i]
+                }
             }),
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
@@ -290,8 +292,10 @@ function success(user){
             url: '/scores/' + user2_mongo.scoreId,
             type: 'PATCH',
             data: JSON.stringify({
-                "score": user2_data.scores[i],
-                "tag": user2_data.tags[i]
+                "scores": {
+                    "score": user2_data.scores[i],
+                    "tag": user2_data.tags[i]
+                }
             }),
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
@@ -332,40 +336,45 @@ function log(){
     console.log(user2_mongo)
 }
 
-function updateVars(user_data, isBust, isWin){
+function updateUserData(user_data, isBust){
     isBust ? user_data.temp_score = user_data.score : user_data.score = user_data.temp_score
     user_data.scoreset.push(temp_sum)
     for (let i in temp_scores){
-        user_data.scores.push(i)
+        user_data.scores.push(temp_scores[i])
     }
     for (let i in temp_tags){
-        user_data.tags.push(i)
+        user_data.tags.push(temp_tags[i])
     }
     user_data.round++
-    if (!isWin){
-        temp_scores = []
-        temp_tags = []
-        temp_sum = 0
-        count_this_user = 0
-    }
 }
 
-function updateHTML(user, user_data, val, isBust){
+function updateLocalVars(){
+    temp_scores = []
+    temp_tags = []
+    temp_sum = 0
+    count_this_user = 0
+}
+
+function updateBoard(user, user_data, val, isBust){
     $("."+user+"_input").val("")
     $("."+user+"_score p").text(user_data.temp_score)
     $("."+user+"_sum").text(temp_sum)
     if (isBust){
         $("."+user+"_board ul").find("li").remove()
         for (let i = 1; i <= 3; i++){
-            $("."+user+"_board ul").append("<li id='"+user+"_li_"+i+"'>0</li>") // Start from li_1
+            $("."+user+"_board ul").append("<li id='"+user+"_li_"+i+"'>-</li>") // Start from li_1
         }
         return
     }
     $("."+user+"_board ul").append("<li id='"+user+"_li_"+count_this_user+"'>"+val+"</li>") // Start from li_1
 }
 
-function updateHisBoard(user){
+function updateHisCard(user, isBust){
     $("."+user+"_his_round ul").append("<li>"+round+"</li>")
+    if (isBust) {
+        $("."+user+"_his_score ul").append("<li>-</li>")
+        return
+    }
     $("."+user+"_his_score ul").append("<li>"+temp_sum+"</li>")
 }
 
@@ -379,37 +388,37 @@ function scoreSubmit(user, user_data, val, tag){
     count_this_round++
     count_this_user++
     user_data.temp_score -= val
-    temp_sum += val
-    if (tag == 2 || tag == 3){
-        val /= tag
-    }
-    temp_scores.push(val)
-    temp_tags.push(tag)
     if (user_data.temp_score < 0){
         temp_sum = 0
         temp_scores = [0]
         temp_tags = [99]
         count_this_round += (3 - count_this_user)
-        updateVars(user_data, true, false) // user_data, tag, isBust, isWin
-        updateHTML(user, user_data, val, true) // user, user_data, val, isBust
-        updateHisBoard(user)
-        log()
+        updateUserData(user_data, true)
+        updateLocalVars()
+        updateBoard(user, user_data, val, true)
+        updateHisCard(user, true)
     }
     else if (user_data.temp_score == 0){
-        updateVars(user_data, false, true) // user_data, isBust, isWin
-        updateHTML(user, user_data, val, false) // user, user_data, val, isBust
-        updateHisBoard(user)
-        log()
+        temp_sum += val
+        tag == 2 || tag == 3 ? temp_scores.push(val/tag) : temp_scores.push(val)
+        temp_tags.push(tag)
+        updateUserData(user_data, false)
+        updateBoard(user, user_data, val, false)
+        updateHisCard(user, false)
         success(user)
     }
     else{
-        updateHTML(user, user_data, val, false) // user, user_data, val, isBust
+        temp_sum += val
+        tag == 2 || tag == 3 ? temp_scores.push(val/tag) : temp_scores.push(val)
+        temp_tags.push(tag)
+        updateBoard(user, user_data, val, false)
         if (count_this_user == 3){
-            updateHisBoard(user)
-            updateVars(user_data, false, false) // user_data, isBust, isWin
-            log()
+            updateHisCard(user, false)
+            updateUserData(user_data, false)
+            updateLocalVars()
         }
     }
+    log()
 }
 
 $(".user1_submit").click(function(){

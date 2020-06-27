@@ -20,7 +20,9 @@ router.get('/:id', getScore, async (req, res) => {
 // Creating one
 router.post('/', async (req, res) => {
     const score = new Score({
-        name: req.body.name
+        name: req.body.name,
+        score_count: 0,
+        scores: []
     })
     try {
         const newScore = await score.save()
@@ -37,6 +39,7 @@ router.patch('/:id', getScore, async (req, res) => {
     }
     if (req.body.scores != null){
         res.score.scores.push(req.body.scores)
+        res.score.score_count++
     }
     try {
         const updatedScore = await res.score.save()
