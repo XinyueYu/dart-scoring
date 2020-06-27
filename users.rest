@@ -38,5 +38,14 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3000/users/5ef67a7a132c3a76fd7b4558
+PATCH http://localhost:3000/users/5ef5a505d0370f4a659c970d
+Content-Type: application/json
+
+{
+    "name": "Test3"
+}
+
+###
+
+DELETE http://localhost:3000/users/5ef5a507d0370f4a659c970e
 

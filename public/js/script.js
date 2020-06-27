@@ -1,19 +1,34 @@
 var user1_data = {
-    scoreset_detail: [],
-    scoreset: [],
+    scores: [],
+    tags: [],
+    scoreset: [], // Array of sum of three darts [23, 45, 15, 54, 42, ...]
     score: 301,
     temp_score: 301,
     round: 0,
+    single: 0,
+    double: 0,
+    triple: 0,
+    missed: 0,
+    bust: 0,
+    bullseye: 0
 }
 var user2_data = {
-    scoreset_detail: [],
+    scores: [],
+    tags: [],
     scoreset: [],
     score: 301,
     temp_score: 301,
     round: 0,
+    single: 0,
+    double: 0,
+    triple: 0,
+    missed: 0,
+    bust: 0,
+    bullseye: 0
 }
-var temp_scoreset = []
-var temp_sum = 0
+var temp_scores = [] // scores of three darts in this round
+var temp_tags = []
+var temp_sum = 0 // sum of three darts in this round
 var round = 1
 var count_this_round = 0 // 0 to 6
 var count_this_user = 0 // 0 to 3
@@ -41,11 +56,24 @@ function grabData(idx1, idx2){
         $("#data_card_1 div span").eq(2).text((data[idx1].win_avg_round * 1).toFixed(2))
         $("#data_card_1 div span").eq(3).text(data[idx1].max_3_darts)
         $("#data_card_1 div span").eq(4).text((data[idx1].avg_3_darts * 1).toFixed(2))
+        $("#data_card_1 div span").eq(5).text(data[idx1].single)
+        $("#data_card_1 div span").eq(6).text(data[idx1].double)
+        $("#data_card_1 div span").eq(7).text(data[idx1].triple)
+        $("#data_card_1 div span").eq(8).text(data[idx1].missed)
+        $("#data_card_1 div span").eq(9).text(data[idx1].bust)
+        $("#data_card_1 div span").eq(10).text(data[idx1].bullseye)
+
         $("#data_card_2 div span").eq(0).text((data[idx2].win_rate * 100).toFixed(2) + "%")
         $("#data_card_2 div span").eq(1).text(data[idx2].win_min_round)
         $("#data_card_2 div span").eq(2).text((data[idx2].win_avg_round * 1).toFixed(2))
         $("#data_card_2 div span").eq(3).text(data[idx2].max_3_darts)
         $("#data_card_2 div span").eq(4).text((data[idx2].avg_3_darts * 1).toFixed(2))
+        $("#data_card_2 div span").eq(5).text(data[idx2].single)
+        $("#data_card_2 div span").eq(6).text(data[idx2].double)
+        $("#data_card_2 div span").eq(7).text(data[idx2].triple)
+        $("#data_card_2 div span").eq(8).text(data[idx2].missed)
+        $("#data_card_2 div span").eq(9).text(data[idx2].bust)
+        $("#data_card_2 div span").eq(10).text(data[idx2].bullseye)
     })
     $.get("/scores", function(data){
         user1_mongo.scoreId = data[idx1]._id
@@ -76,14 +104,32 @@ function success(user){
     }
     $(".end").fadeIn(400)
 
+    for (let i = 0; i < user1_data.tags.length; i++){
+        if (user1_data.tags[i] == 0){
+            user1_data.missed++
+        }
+        else if (user1_data.tags[i] == 1){
+            user1_data.single++
+        }
+        else if (user1_data.tags[i] == 2){
+            user1_data.double++
+        }
+        else if (user1_data.tags[i] == 3){
+            user1_data.triple++
+        }
+        else if (user1_data.tags[i] == 25 || user1_data.tags[i] == 50){
+            user1_data.bullseye++
+        }
+        else if (user1_data.tags[i] == 99){
+            user1_data.bust++
+        }
+    }
+
     $.get("/users/" + user1_mongo.userId, function(data){
         let update_data = {}
         // win_count, win_min_round, win_avg_round
         if (user == "user1"){
-            if (data.win_min_round == null){
-                update_data["win_min_round"] = round
-            }
-            else if (round < data.win_min_round){
+            if (data.win_min_round == null || round < data.win_min_round){
                 update_data["win_min_round"] = round
             }
             if (data.win_avg_round == null){
@@ -119,6 +165,13 @@ function success(user){
         if (user1_max_change){
             update_data["max_3_darts"] = user1_max
         }
+        update_data["single"] = data.single + user1_data.single
+        update_data["double"] = data.double + user1_data.double
+        update_data["triple"] = data.triple + user1_data.triple
+        update_data["missed"] = data.missed + user1_data.missed
+        update_data["bust"] = data.bust + user2_data.bust
+        update_data["bullseye"] = data.bullseye + user1_data.bullseye
+
         $.ajax({
             url: '/users/' + user1_mongo.userId,
             type: 'PATCH',
@@ -133,14 +186,34 @@ function success(user){
         console.log("failed: " + status)
     })
 
+    for (let i = 0; i < user2_data.tags.length; i++){
+        if (user2_data.tags[i] == 0){
+            user2_data.missed++
+        }
+        else if (user2_data.tags[i] == 1){
+            user2_data.single++
+        }
+        else if (user2_data.tags[i] == 2){
+            user2_data.double++
+        }
+        else if (user2_data.tags[i] == 3){
+            user2_data.triple++
+        }
+        else if (user2_data.tags[i] == 25 || user2_data.tags[i] == 50){
+            user2_data.bullseye++
+        }
+        else if (user2_data.tags[i] == 99){
+            user2_data.bust++
+        }
+    }
+
+
+
     $.get("/users/" + user2_mongo.userId, function(data){
         let update_data = {}
         // win_count, win_min_round, win_avg_round
         if (user == "user2"){
-            if (data.win_min_round == null){
-                update_data["win_min_round"] = round
-            }
-            else if (round < data.win_min_round){
+            if (data.win_min_round == null || round < data.win_min_round){
                 update_data["win_min_round"] = round
             }
             if (data.win_avg_round == null){
@@ -176,6 +249,13 @@ function success(user){
         if (user2_max_change){
             update_data["max_3_darts"] = user2_max
         }
+        update_data["single"] = data.single + user2_data.single
+        update_data["double"] = data.double + user2_data.double
+        update_data["triple"] = data.triple + user2_data.triple
+        update_data["missed"] = data.missed + user2_data.missed
+        update_data["bust"] = data.bust + user2_data.bust
+        update_data["bullseye"] = data.bullseye + user2_data.bullseye
+
         $.ajax({
             url: '/users/' + user2_mongo.userId,
             type: 'PATCH',
@@ -190,27 +270,36 @@ function success(user){
         console.log("failed: " + status)
     })
 
-    $.ajax({
-        url: '/scores/' + user1_mongo.scoreId,
-        type: 'PATCH',
-        data: JSON.stringify({"scores": user1_data.scoreset_detail}),
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(res) {
-            console.log("Update user1 scores successfully")
-        }
-    })
-
-    $.ajax({
-        url: '/scores/' + user2_mongo.scoreId,
-        type: 'PATCH',
-        data: JSON.stringify({"scores": user2_data.scoreset_detail}),
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(res) {
-            console.log("Update user2 scores successfully")
-        }
-    })
+    for(let i = 0; i < user1_data.scores.length; i++){
+        $.ajax({
+            url: '/scores/' + user1_mongo.scoreId,
+            type: 'PATCH',
+            data: JSON.stringify({
+                "score": user1_data.scores[i],
+                "tag": user1_data.tags[i]
+            }),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function(res) {
+                console.log("Update user1 scores successfully")
+            }
+        })
+    }
+    for(let i = 0; i < user2_data.scores.length; i++){
+        $.ajax({
+            url: '/scores/' + user2_mongo.scoreId,
+            type: 'PATCH',
+            data: JSON.stringify({
+                "score": user2_data.scores[i],
+                "tag": user2_data.tags[i]
+            }),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function(res) {
+                console.log("Update user2 scores successfully")
+            }
+        })
+    }
 }
 
 
@@ -220,12 +309,12 @@ function success(user){
 
 $(".user1_input").keydown(function(event){
     if(event.keyCode==13){
-       $(".user1_submit").click();
+       $(".user1_submit").eq(0).click();
     }
 })
 $(".user2_input").keydown(function(event){
     if(event.keyCode==13){
-       $(".user2_submit").click();
+       $(".user2_submit").eq(0).click();
     }
 })
 
@@ -233,7 +322,8 @@ function log(){
     console.log("============================================")
     console.log(user1_data)
     console.log(user2_data)
-    console.log("temp_scoreset: " + temp_scoreset)
+    console.log("temp_scores: " + temp_scores)
+    console.log("temp_tags: " + temp_tags)
     console.log("temp_sum: " + temp_sum)
     console.log("round: " + round)
     console.log("count_this_round: " + count_this_round)
@@ -245,10 +335,16 @@ function log(){
 function updateVars(user_data, isBust, isWin){
     isBust ? user_data.temp_score = user_data.score : user_data.score = user_data.temp_score
     user_data.scoreset.push(temp_sum)
-    user_data.scoreset_detail.push(temp_scoreset)
+    for (let i in temp_scores){
+        user_data.scores.push(i)
+    }
+    for (let i in temp_tags){
+        user_data.tags.push(i)
+    }
     user_data.round++
     if (!isWin){
-        temp_scoreset = []
+        temp_scores = []
+        temp_tags = []
         temp_sum = 0
         count_this_user = 0
     }
@@ -268,12 +364,12 @@ function updateHTML(user, user_data, val, isBust){
     $("."+user+"_board ul").append("<li id='"+user+"_li_"+count_this_user+"'>"+val+"</li>") // Start from li_1
 }
 
-function updateHisBoard(user, user_data){
+function updateHisBoard(user){
     $("."+user+"_his_round ul").append("<li>"+round+"</li>")
     $("."+user+"_his_score ul").append("<li>"+temp_sum+"</li>")
 }
 
-function scoreSubmit(user, user_data, val){
+function scoreSubmit(user, user_data, val, tag){
     if (count_this_round == 6){
         count_this_round = 0
         $(".round p").text(++round)
@@ -284,38 +380,69 @@ function scoreSubmit(user, user_data, val){
     count_this_user++
     user_data.temp_score -= val
     temp_sum += val
-    temp_scoreset.push(val)
+    if (tag == 2 || tag == 3){
+        val /= tag
+    }
+    temp_scores.push(val)
+    temp_tags.push(tag)
     if (user_data.temp_score < 0){
         temp_sum = 0
-        temp_scoreset = [0,0,0]
+        temp_scores = [0]
+        temp_tags = [99]
         count_this_round += (3 - count_this_user)
-        updateVars(user_data, true, false)
-        updateHTML(user, user_data, val, true)
-        updateHisBoard(user, user_data)
+        updateVars(user_data, true, false) // user_data, tag, isBust, isWin
+        updateHTML(user, user_data, val, true) // user, user_data, val, isBust
+        updateHisBoard(user)
+        log()
     }
     else if (user_data.temp_score == 0){
-        updateVars(user_data, false, true)
-        updateHTML(user, user_data, val, false)
-        updateHisBoard(user, user_data)
+        updateVars(user_data, false, true) // user_data, isBust, isWin
+        updateHTML(user, user_data, val, false) // user, user_data, val, isBust
+        updateHisBoard(user)
+        log()
         success(user)
     }
     else{
-        updateHTML(user, user_data, val, false)
+        updateHTML(user, user_data, val, false) // user, user_data, val, isBust
         if (count_this_user == 3){
-            updateHisBoard(user, user_data)
-            updateVars(user_data, false, false)
+            updateHisBoard(user)
+            updateVars(user_data, false, false) // user_data, isBust, isWin
+            log()
         }
     }
-    log()
 }
 
 $(".user1_submit").click(function(){
+    let tag = 1
     let val = $(".user1_input").val() == "" ? 0 : Number($(".user1_input").val())
-    scoreSubmit("user1", user1_data, val)
+    if($(this).attr("id") == "user1_submit_2"){
+        val *= 2
+        tag = 2
+    }
+    else if($(this).attr("id") == "user1_submit_3"){
+        val *= 3
+        tag = 3
+    }
+    else if (val == 0 || val == 25 || val == 50){
+        tag = val
+    }
+    scoreSubmit("user1", user1_data, val, tag)
 })
 $(".user2_submit").click(function(){
+    let tag = 1
     let val = $(".user2_input").val() == "" ? 0 : Number($(".user2_input").val())
-    scoreSubmit("user2", user2_data, val)
+    if($(this).attr("id") == "user2_submit_2"){
+        val *= 2
+        tag = 2
+    }
+    else if($(this).attr("id") == "user2_submit_3"){
+        val *= 3
+        tag = 3
+    }
+    else if (val == 0 || val == 25 || val == 50){
+        tag = val
+    }
+    scoreSubmit("user2", user2_data, val, tag)
 })
 
 // ---------------------------------------------------------

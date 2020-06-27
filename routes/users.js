@@ -47,36 +47,36 @@ router.post('/', async (req, res) => {
 
 // Updating one
 router.patch('/:id', getUser, async (req, res) => {
-    if (req.body.name != null) {
+    if (req.body.name != null)
         res.user.name = req.body.name
-    }
-    if (req.body.win_count != null) {
+    if (req.body.win_count != null)
         res.user.win_count = req.body.win_count
-    }
-    if (req.body.total_count != null) {
+    if (req.body.total_count != null)
         res.user.total_count = req.body.total_count
-    }
-    if (req.body.win_rate != null) {
+    if (req.body.win_rate != null)
         res.user.win_rate = req.body.win_rate
-    }
-    if (req.body.sum != null) {
+    if (req.body.sum != null)
         res.user.sum = req.body.sum
-    }
-    if (req.body.total_round_count != null) {
+    if (req.body.total_round_count != null)
         res.user.total_round_count = req.body.total_round_count
-    }
-    if (req.body.win_min_round != null) {
+    if (req.body.win_min_round != null)
         res.user.win_min_round = req.body.win_min_round
-    }
-    if (req.body.win_avg_round != null) {
+    if (req.body.win_avg_round != null)
         res.user.win_avg_round = req.body.win_avg_round
-    }
-    if (req.body.max_3_darts != null) {
+    if (req.body.max_3_darts != null)
         res.user.max_3_darts = req.body.max_3_darts
-    }
-    if (req.body.avg_3_darts != null) {
-        res.user.avg_3_darts = req.body.avg_3_darts
-    }
+    if (req.body.single != null)
+        res.user.single = req.body.single
+    if (req.body.double != null)
+        res.user.double = req.body.double
+    if (req.body.triple != null)
+        res.user.triple = req.body.triple
+    if (req.body.missed != null)
+        res.user.missed = req.body.missed
+    if (req.body.bullseye != null) 
+        res.user.bullseye = req.body.bullseye
+    if (req.body.bust != null) 
+        res.user.bust = req.body.bust
     try {
         const updatedUser = await res.user.save()
         res.json(updatedUser)

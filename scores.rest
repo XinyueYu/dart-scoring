@@ -38,18 +38,21 @@ POST http://localhost:3000/scores
 Content-Type: application/json
 
 {
-    "name": "Test4"
+    "name": "Test2"
 }
 
 ###
 
-PATCH http://localhost:3000/scores/5ef67a95132c3a76fd7b455b
+PATCH http://localhost:3000/scores/5ef6b336af511e8c8950b3d8
 Content-Type: application/json
 
 {
-    "scores": [[2,2,2]]
+    "scores": {
+        "score": 10,
+        "tag": 2
+    }
 }
 
 ###
 
-DELETE http://localhost:3000/scores/5ef67a95132c3a76fd7b455b
+DELETE http://localhost:3000/scores/5ef6b33baf511e8c8950b3d9

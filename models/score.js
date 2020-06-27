@@ -1,8 +1,20 @@
+// tag 0-missed 1-single 2-double 3-triple 25-bullseye 50-bullseye 99-bust
+
 const mongoose = require('mongoose')
 
 const scoreSchema = new mongoose.Schema({
     name: String,
-    scores: [[[Number]]]
+    score_count: Number,
+    scores: [{
+        _id: false,
+        score: Number,
+        tag: Number
+    }]
 })
+
+scoreSchema.pre('validate', function (next) {
+    this.score_count = this.scores.length
+    next();
+});
 
 module.exports = mongoose.model('Score', scoreSchema)
