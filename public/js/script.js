@@ -19,10 +19,12 @@ var count_this_round = 0 // 0 to 6
 var count_this_user = 0 // 0 to 3
 var user1_mongo = {
     userId: null,
+    scoreId: null,
     name: ""
 }
 var user2_mongo = {
     userId: null,
+    scoreId: null,
     name: ""
 }
 
@@ -44,6 +46,10 @@ function grabData(idx1, idx2){
         $("#data_card_2 div span").eq(2).text((data[idx2].win_avg_round * 1).toFixed(2))
         $("#data_card_2 div span").eq(3).text(data[idx2].max_3_darts)
         $("#data_card_2 div span").eq(4).text((data[idx2].avg_3_darts * 1).toFixed(2))
+    })
+    $.get("/scores", function(data){
+        user1_mongo.scoreId = data[idx1]._id
+        user2_mongo.scoreId = data[idx2]._id
     })
 }
 
@@ -68,7 +74,6 @@ function success(user){
         $("#winner").text(user2_mongo.name)
         $("#winner").css("color", "forestgreen")
     }
-    $(".mask").css("display", "block")
     $(".end").fadeIn(400)
 
     $.get("/users/" + user1_mongo.userId, function(data){
@@ -183,6 +188,28 @@ function success(user){
         })
     }).fail(function(status) {
         console.log("failed: " + status)
+    })
+
+    $.ajax({
+        url: '/scores/' + user1_mongo.scoreId,
+        type: 'PATCH',
+        data: JSON.stringify({"scores": user1_data.scoreset_detail}),
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(res) {
+            console.log("Update user1 scores successfully")
+        }
+    })
+
+    $.ajax({
+        url: '/scores/' + user2_mongo.scoreId,
+        type: 'PATCH',
+        data: JSON.stringify({"scores": user2_data.scoreset_detail}),
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(res) {
+            console.log("Update user2 scores successfully")
+        }
     })
 }
 

@@ -1,0 +1,55 @@
+GET http://localhost:3000/scores
+
+###
+
+GET http://localhost:3000/scores/5ef67a93132c3a76fd7b455a
+
+###
+
+
+POST http://localhost:3000/scores
+Content-Type: application/json
+
+{
+    "name": "Haozhi"
+}
+
+###
+
+POST http://localhost:3000/scores
+Content-Type: application/json
+
+{
+    "name": "Xinyue"
+}
+
+###
+
+POST http://localhost:3000/scores
+Content-Type: application/json
+
+{
+    "name": "Test1"
+}
+
+###
+
+POST http://localhost:3000/scores
+Content-Type: application/json
+
+{
+    "name": "Test4"
+}
+
+###
+
+PATCH http://localhost:3000/scores/5ef67a95132c3a76fd7b455b
+Content-Type: application/json
+
+{
+    "scores": [[2,2,2]]
+}
+
+###
+
+DELETE http://localhost:3000/scores/5ef67a95132c3a76fd7b455b

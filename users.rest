@@ -1,0 +1,42 @@
+GET http://localhost:3000/users
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "Haozhi"
+}
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "Xinyue"
+}
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "Test1"
+}
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "Test2"
+}
+
+###
+
+DELETE http://localhost:3000/users/5ef67a7a132c3a76fd7b4558
+

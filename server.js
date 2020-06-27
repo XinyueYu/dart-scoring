@@ -18,7 +18,9 @@ app.set('view engine', 'html')
 
 const indexRouter = require('./routes/')
 const usersRouter = require('./routes/users')
+const scoresRouter = require('./routes/scores')
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
+app.use('/scores', scoresRouter)
 
 app.listen(3000, () => console.log('Server started'))
