@@ -17,15 +17,15 @@ ul{
 li{
     list-style: none;
 }
-::-webkit-scrollbar{
+.data_card::-webkit-scrollbar, .history_card::-webkit-scrollbar{
     width: 0px;
 }
 
-#data_card_1, #name_card_1, #history_card_1, .user1_board p{
+#data_card_1, #score_card_1, #history_card_1, .user1_board p{
     background-color: firebrick;
     color: white;
 }
-#data_card_2, #name_card_2, #history_card_2, .user2_board p{
+#data_card_2, #score_card_2, #history_card_2, .user2_board p{
     background-color: forestgreen;
     color: white;
 }
@@ -48,16 +48,16 @@ li{
     border-radius: 20px;
     box-shadow: 2px 2px 2px grey;
 }
-#name_card_1, #data_card_1, #history_card_1{
+#score_card_1, #data_card_1, #history_card_1{
     border-radius: 20px;
     box-shadow: 2px 2px 4px #660000;
 }
-#name_card_2, #data_card_2, #history_card_2{
+#score_card_2, #data_card_2, #history_card_2{
     border-radius: 20px;
     box-shadow: 2px 2px 4px #38471f;
 }
 
-.name_card:hover, .data_card:hover, .board:hover, .round:hover, .user1_input:hover, .user2_input:hover{
+.score_card:hover, .data_card:hover, .board:hover, .round:hover{
     transform: scale(1.015);
 }
 .history_card:hover{
@@ -66,7 +66,7 @@ li{
 .user1_submit:hover, .user2_submit:hover{
     transform: scale(1.1);
 }
-.name_card, .data_card, .history_card, .board, .round, .user1_input, .user2_input, .user1_submit, .user2_submit{
+.score_card, .data_card, .history_card, .board, .round, .user1_submit, .user2_submit{
     transition: all 0.1s ease-in-out;
 }
 
@@ -159,7 +159,7 @@ li{
     flex-direction: column;
 }
 
-.name_card{
+.score_card{
     height: 40%;
     display: flex;
     flex-direction: column;

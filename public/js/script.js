@@ -53,7 +53,7 @@ function grabData(idx1, idx2){
         user2_mongo.name = data[idx2].name
         $(".user1_board p, #user_name_1").text(user1_mongo.name)
         $(".user2_board p, #user_name_2").text(user2_mongo.name)
-        
+
         $("#data_card_1 div span").eq(0).text((data[idx1].win_rate * 100).toFixed(2) + "%")
         $("#data_card_1 div span").eq(1).text(data[idx1].win_min_round)
         $("#data_card_1 div span").eq(2).text((data[idx1].win_avg_round * 1).toFixed(2))
@@ -118,7 +118,7 @@ function updateUserMongo(user_data, id, isWin){
             }
         }
         update_data["sum"] = data.sum
-        update_data["avg_3_darts"] = data.sum / data.total_round_count
+        update_data["avg_3_darts"] = data.sum / (data.total_round_count + user_data.round)
         if (max_change){
             update_data["max_3_darts"] = max
         }
@@ -279,7 +279,15 @@ function updateHisCard(user, isBust){
     $("."+user+"_his_score ul").append("<li>"+temp_sum+"</li>")
 }
 
-function scoreSubmit(user, user_data, val, tag){
+function lockInputAndSubmit(userToLock, userToUnlock){
+    $("."+userToLock+"_input").attr("disabled","disabled");
+    $("."+userToLock+"_submit").css("pointer-events", "none");
+    $("."+userToUnlock+"_input").removeAttr("disabled");
+    $("."+userToUnlock+"_submit").css("pointer-events", "auto");
+    $("."+userToUnlock+"_input").click();
+}
+
+function scoreSubmit(user, the_other_user, user_data, val, tag){
     if (count_this_round == 6){
         count_this_round = 0
         $(".round p").text(++round)
@@ -296,6 +304,7 @@ function scoreSubmit(user, user_data, val, tag){
         count_this_round += (3 - count_this_user)
         updateUserData(user_data, true)
         updateLocalVars()
+        lockInputAndSubmit(user, the_other_user)
         updateBoard(user, user_data, val, true)
         updateHisCard(user, true)
     }
@@ -314,6 +323,7 @@ function scoreSubmit(user, user_data, val, tag){
         temp_tags.push(tag)
         updateBoard(user, user_data, val, false)
         if (count_this_user == 3){
+            lockInputAndSubmit(user, the_other_user)
             updateHisCard(user, false)
             updateUserData(user_data, false)
             updateLocalVars()
@@ -323,6 +333,10 @@ function scoreSubmit(user, user_data, val, tag){
 }
 
 $(".user1_submit").click(function(){
+    if (round == 1){
+        $(".user2_input").attr("disabled","disabled");
+        $(".user2_submit").css("pointer-events", "none");
+    }
     let tag = 1
     let val = $(".user1_input").val() == "" ? 0 : Number($(".user1_input").val())
     if($(this).attr("id") == "user1_submit_2"){
@@ -336,9 +350,13 @@ $(".user1_submit").click(function(){
     else if (val == 0 || val == 25 || val == 50){
         tag = val
     }
-    scoreSubmit("user1", user1_data, val, tag)
+    scoreSubmit("user1", "user2", user1_data, val, tag)
 })
 $(".user2_submit").click(function(){
+    if (round == 1){
+        $(".user1_input").attr("disabled","disabled");
+        $(".user1_submit").css("pointer-events", "none");
+    }
     let tag = 1
     let val = $(".user2_input").val() == "" ? 0 : Number($(".user2_input").val())
     if($(this).attr("id") == "user2_submit_2"){
@@ -352,7 +370,7 @@ $(".user2_submit").click(function(){
     else if (val == 0 || val == 25 || val == 50){
         tag = val
     }
-    scoreSubmit("user2", user2_data, val, tag)
+    scoreSubmit("user2", "user1", user2_data, val, tag)
 })
 
 // ---------------------------------------------------------
