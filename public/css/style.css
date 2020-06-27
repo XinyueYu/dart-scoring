@@ -17,10 +17,9 @@ ul{
 li{
     list-style: none;
 }
-::-webkit-scrollbar-track{
-    background-color: none;
+::-webkit-scrollbar{
+    width: 0px;
 }
-
 
 #data_card_1, #name_card_1, #history_card_1, .user1_board p{
     background-color: firebrick;
@@ -58,12 +57,24 @@ li{
     box-shadow: 2px 2px 4px #38471f;
 }
 
+.name_card:hover, .data_card:hover, .board:hover, .round:hover, .user1_input:hover, .user2_input:hover{
+    transform: scale(1.015);
+}
+.history_card:hover{
+    transform: scale(1.01);
+}
+.user1_submit:hover, .user2_submit:hover{
+    transform: scale(1.1);
+}
+.name_card, .data_card, .history_card, .board, .round, .user1_input, .user2_input, .user1_submit, .user2_submit{
+    transition: all 0.1s ease-in-out;
+}
 
 .board{
     position: absolute;
     left: 20px;
     top: 20px;
-    width: 452px;
+    width: 442px;
     height: 100px;
     border-radius: 20px;
     padding: 0 10px;
@@ -78,8 +89,8 @@ li{
 }
 .user1_board, .user2_board{
     width: 100%;
-    height: 34px;
-    line-height: 34px;
+    height: 36px;
+    line-height: 36px;
     font-size: 24px;
     border-radius: 20px;
     display: flex;
@@ -88,9 +99,6 @@ li{
 .user1_board p, .user2_board p{
     width: 120px;
     border-radius: 20px;
-}
-.user1_board ul, .user2_board ul{
-    margin-left: 10px;
 }
 .user1_board ul li, .user2_board ul li{
     float: left;
@@ -156,16 +164,18 @@ li{
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
+    align-items: center;
     margin: 20px;
+    padding: 10px 20px;
 }
 .data_card{
     height: 60%;
     margin: 20px;
     margin-top: 0;
     padding: 10px 20px;
-    font-size: 16px;
-    line-height: 20px;
-    overflow: auto;
+    font-size: 20px;
+    line-height: 24px;
+    overflow-y: auto;
 }
 .history_card{
     width: 40%;
@@ -174,16 +184,14 @@ li{
     flex-direction: column;
     margin: 140px 20px 20px 0;
     text-align: center;
-    font-size: 18px;
+    font-size: 24px;
     padding: 10px 20px;
     line-height: 30px;
 }
 
 .user_name{
     font-size: 32px;
-    margin: 0;
-    width: 100%;
-    text-align: center;
+    line-height: 32px;
 }
 .score_wrap{
     display: flex;
@@ -195,8 +203,8 @@ li{
     position: relative;
 }
 .user1_score p, .user2_score p{
-    font-size: 100px;
-    line-height: 100px;
+    font-size: 120px;
+    line-height: 120px;
 }
 .user1_minus, .user2_minus{
     display: none;
@@ -210,7 +218,7 @@ li{
 .label{
     display: flex;
     justify-content: space-around;
-    border-bottom: 1px solid white;
+    border-bottom: 2px solid white;
     padding-bottom: 4px;
 }
 .scroll{

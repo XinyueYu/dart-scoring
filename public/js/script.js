@@ -10,7 +10,7 @@ var user1_data = {
     triple: 0,
     missed: 0,
     bust: 0,
-    bullseye: 0
+    bullseye: 0, 
 }
 var user2_data = {
     scores: [],
@@ -42,6 +42,8 @@ var user2_mongo = {
     scoreId: null,
     name: ""
 }
+var user1_theme_color = "firebrick"
+var user2_theme_color = "forestgreen"
 
 function grabData(idx1, idx2){
     $.get("/users", function(data){
@@ -51,29 +53,28 @@ function grabData(idx1, idx2){
         user2_mongo.name = data[idx2].name
         $(".user1_board p, #user_name_1").text(user1_mongo.name)
         $(".user2_board p, #user_name_2").text(user2_mongo.name)
+        
         $("#data_card_1 div span").eq(0).text((data[idx1].win_rate * 100).toFixed(2) + "%")
         $("#data_card_1 div span").eq(1).text(data[idx1].win_min_round)
         $("#data_card_1 div span").eq(2).text((data[idx1].win_avg_round * 1).toFixed(2))
         $("#data_card_1 div span").eq(3).text(data[idx1].max_3_darts)
         $("#data_card_1 div span").eq(4).text((data[idx1].avg_3_darts * 1).toFixed(2))
-        $("#data_card_1 div span").eq(5).text(data[idx1].single)
-        $("#data_card_1 div span").eq(6).text(data[idx1].double)
-        $("#data_card_1 div span").eq(7).text(data[idx1].triple)
-        $("#data_card_1 div span").eq(8).text(data[idx1].missed)
-        $("#data_card_1 div span").eq(9).text(data[idx1].bust)
-        $("#data_card_1 div span").eq(10).text(data[idx1].bullseye)
+        $("#data_card_1 div span").eq(5).text(data[idx1].double)
+        $("#data_card_1 div span").eq(6).text(data[idx1].triple)
+        $("#data_card_1 div span").eq(7).text(data[idx1].missed)
+        $("#data_card_1 div span").eq(8).text(data[idx1].bust)
+        $("#data_card_1 div span").eq(9).text(data[idx1].bullseye)
 
         $("#data_card_2 div span").eq(0).text((data[idx2].win_rate * 100).toFixed(2) + "%")
         $("#data_card_2 div span").eq(1).text(data[idx2].win_min_round)
         $("#data_card_2 div span").eq(2).text((data[idx2].win_avg_round * 1).toFixed(2))
         $("#data_card_2 div span").eq(3).text(data[idx2].max_3_darts)
         $("#data_card_2 div span").eq(4).text((data[idx2].avg_3_darts * 1).toFixed(2))
-        $("#data_card_2 div span").eq(5).text(data[idx2].single)
-        $("#data_card_2 div span").eq(6).text(data[idx2].double)
-        $("#data_card_2 div span").eq(7).text(data[idx2].triple)
-        $("#data_card_2 div span").eq(8).text(data[idx2].missed)
-        $("#data_card_2 div span").eq(9).text(data[idx2].bust)
-        $("#data_card_2 div span").eq(10).text(data[idx2].bullseye)
+        $("#data_card_2 div span").eq(5).text(data[idx2].double)
+        $("#data_card_2 div span").eq(6).text(data[idx2].triple)
+        $("#data_card_2 div span").eq(7).text(data[idx2].missed)
+        $("#data_card_2 div span").eq(8).text(data[idx2].bust)
+        $("#data_card_2 div span").eq(9).text(data[idx2].bullseye)
     })
     $.get("/scores", function(data){
         user1_mongo.scoreId = data[idx1]._id
@@ -89,220 +90,102 @@ $(document).ready(function() {
 //                      Handle Success
 // ---------------------------------------------------------
 
+function updateUserMongo(user_data, id, isWin){
+    $.get("/users/" + id, function(data){
+        let update_data = {}
+        if (isWin){
+            if (data.win_min_round == null || round < data.win_min_round){
+                update_data["win_min_round"] = round
+            }
+            if (data.win_avg_round == null){
+                update_data["win_avg_round"] = round
+            }
+            else {
+                update_data["win_avg_round"] = (data.win_avg_round * data.win_count + round) / (data.win_count + 1)
+            }
+            update_data["win_count"] = ++data.win_count
+        }
+        update_data["total_count"] = ++data.total_count
+        update_data["win_rate"] = data.win_count / data.total_count
+        update_data["total_round_count"] = data.total_round_count + user_data.round
+        let max = data.max_3_darts
+        let max_change = false
+        for(let i = 0; i < user_data.scoreset.length; i++){
+            data.sum += user_data.scoreset[i]
+            if (user_data.scoreset[i] > max){
+                max = user_data.scoreset[i]
+                max_change = true
+            }
+        }
+        update_data["sum"] = data.sum
+        update_data["avg_3_darts"] = data.sum / data.total_round_count
+        if (max_change){
+            update_data["max_3_darts"] = max
+        }
+        update_data["single"] = data.single + user_data.single
+        update_data["double"] = data.double + user_data.double
+        update_data["triple"] = data.triple + user_data.triple
+        update_data["missed"] = data.missed + user_data.missed
+        update_data["bust"] = data.bust + user_data.bust
+        update_data["bullseye"] = data.bullseye + user_data.bullseye
+
+        $.ajax({
+            url: '/users/' + id,
+            type: 'PATCH',
+            data: JSON.stringify(update_data),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function(res) {
+                console.log("Update user:"+id+" successfully")
+            }
+        })
+    }).fail(function(status) {
+        console.log("failed: " + status)
+    })
+}
+
+function updateScoreMongo(user_data, id, i){
+    $.ajax({
+        url: '/scores/' + id,
+        type: 'PATCH',
+        data: JSON.stringify({
+            "scores": {
+                "score": user_data.scores[i],
+                "tag": user_data.tags[i]
+            }
+        }),
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(res) {
+            console.log("Update score:"+id+" successfully")
+        }
+    })
+}
+
 function success(user){
     if (user == "user1"){
-        $(".end").css("border", "4px solid firebrick")
-        $(".play_again").css("background-color", "firebrick")
+        updateUserMongo(user1_data, user1_mongo.userId, true)
+        updateUserMongo(user2_data, user2_mongo.userId, false)
+        $(".end").css("border", "4px solid "+user1_theme_color)
+        $(".play_again").css("background-color", user1_theme_color)
         $("#winner").text(user1_mongo.name)
-        $("#winner").css("color", "firebrick")
+        $("#winner").css("color", user1_theme_color)
     }
     else{
-        $(".end").css("border", "4px solid forestgreen")
-        $(".play_again").css("background-color", "forestgreen")
+        updateUserMongo(user1_data, user1_mongo.userId, false)
+        updateUserMongo(user2_data, user2_mongo.userId, true)
+        $(".end").css("border", "4px solid "+user2_theme_color)
+        $(".play_again").css("background-color", user2_theme_color)
         $("#winner").text(user2_mongo.name)
-        $("#winner").css("color", "forestgreen")
+        $("#winner").css("color", user2_theme_color)
     }
     $(".end").fadeIn(400)
 
-    for (let i = 0; i < user1_data.tags.length; i++){
-        if (user1_data.tags[i] == 0){
-            user1_data.missed++
-        }
-        else if (user1_data.tags[i] == 1){
-            user1_data.single++
-        }
-        else if (user1_data.tags[i] == 2){
-            user1_data.double++
-        }
-        else if (user1_data.tags[i] == 3){
-            user1_data.triple++
-        }
-        else if (user1_data.tags[i] == 25 || user1_data.tags[i] == 50){
-            user1_data.bullseye++
-        }
-        else if (user1_data.tags[i] == 99){
-            user1_data.bust++
-        }
-    }
-
-    $.get("/users/" + user1_mongo.userId, function(data){
-        let update_data = {}
-        // win_count, win_min_round, win_avg_round
-        if (user == "user1"){
-            if (data.win_min_round == null || round < data.win_min_round){
-                update_data["win_min_round"] = round
-            }
-            if (data.win_avg_round == null){
-                update_data["win_avg_round"] = round
-            }
-            else {
-                data.win_avg_round = (data.win_avg_round * data.win_count + round) / (data.win_count + 1)
-                update_data["win_avg_round"] = data.win_avg_round
-            }
-            data.win_count = data.win_count + 1
-            update_data["win_count"] = data.win_count
-        }
-        // total_count
-        data.total_count = data.total_count + 1
-        update_data["total_count"] = data.total_count
-        // win_rate
-        update_data["win_rate"] = data.win_count / data.total_count
-        // total_round_count
-        data.total_round_count = data.total_round_count + user1_data.round
-        update_data["total_round_count"] = data.total_round_count
-        // sum, max_3_darts, avg_3_dart
-        let user1_max = data.max_3_darts
-        let user1_max_change = false
-        for(let i = 0; i < user1_data.scoreset.length; i++){
-            data.sum = data.sum + user1_data.scoreset[i]
-            if (user1_data.scoreset[i] > user1_max){
-                user1_max = user1_data.scoreset[i]
-                user1_max_change = true
-            }
-        }
-        update_data["sum"] = data.sum
-        update_data["avg_3_darts"] = data.sum / data.total_round_count
-        if (user1_max_change){
-            update_data["max_3_darts"] = user1_max
-        }
-        update_data["single"] = data.single + user1_data.single
-        update_data["double"] = data.double + user1_data.double
-        update_data["triple"] = data.triple + user1_data.triple
-        update_data["missed"] = data.missed + user1_data.missed
-        update_data["bust"] = data.bust + user1_data.bust
-        update_data["bullseye"] = data.bullseye + user1_data.bullseye
-
-        $.ajax({
-            url: '/users/' + user1_mongo.userId,
-            type: 'PATCH',
-            data: JSON.stringify(update_data),
-            dataType: "json",
-            contentType: 'application/json; charset=utf-8',
-            success: function(res) {
-                console.log("Update user1 successfully")
-            }
-        })
-    }).fail(function(status) {
-        console.log("failed: " + status)
-    })
-
-    for (let i = 0; i < user2_data.tags.length; i++){
-        if (user2_data.tags[i] == 0){
-            user2_data.missed++
-        }
-        else if (user2_data.tags[i] == 1){
-            user2_data.single++
-        }
-        else if (user2_data.tags[i] == 2){
-            user2_data.double++
-        }
-        else if (user2_data.tags[i] == 3){
-            user2_data.triple++
-        }
-        else if (user2_data.tags[i] == 25 || user2_data.tags[i] == 50){
-            user2_data.bullseye++
-        }
-        else if (user2_data.tags[i] == 99){
-            user2_data.bust++
-        }
-    }
-
-
-
-    $.get("/users/" + user2_mongo.userId, function(data){
-        let update_data = {}
-        // win_count, win_min_round, win_avg_round
-        if (user == "user2"){
-            if (data.win_min_round == null || round < data.win_min_round){
-                update_data["win_min_round"] = round
-            }
-            if (data.win_avg_round == null){
-                update_data["win_avg_round"] = round
-            }
-            else {
-                data.win_avg_round = (data.win_avg_round * data.win_count + round) / (data.win_count + 1)
-                update_data["win_avg_round"] = data.win_avg_round
-            }
-            data.win_count = data.win_count + 1
-            update_data["win_count"] = data.win_count
-        }
-        // total_count
-        data.total_count = data.total_count + 1
-        update_data["total_count"] = data.total_count
-        // win_rate
-        update_data["win_rate"] = data.win_count / data.total_count
-        // total_round_count
-        data.total_round_count = data.total_round_count + user2_data.round
-        update_data["total_round_count"] = data.total_round_count
-        // sum, max_3_darts, avg_3_dart
-        let user2_max = data.max_3_darts
-        let user2_max_change = false
-        for(let i = 0; i < user2_data.scoreset.length; i++){
-            data.sum = data.sum + user2_data.scoreset[i]
-            if (user2_data.scoreset[i] > user2_max){
-                user2_max = user2_data.scoreset[i]
-                user2_max_change = true
-            }
-        }
-        update_data["sum"] = data.sum
-        update_data["avg_3_darts"] = data.sum / data.total_round_count
-        if (user2_max_change){
-            update_data["max_3_darts"] = user2_max
-        }
-        update_data["single"] = data.single + user2_data.single
-        update_data["double"] = data.double + user2_data.double
-        update_data["triple"] = data.triple + user2_data.triple
-        update_data["missed"] = data.missed + user2_data.missed
-        update_data["bust"] = data.bust + user2_data.bust
-        update_data["bullseye"] = data.bullseye + user2_data.bullseye
-
-        $.ajax({
-            url: '/users/' + user2_mongo.userId,
-            type: 'PATCH',
-            data: JSON.stringify(update_data),
-            dataType: "json",
-            contentType: 'application/json; charset=utf-8',
-            success: function(res) {
-                console.log("Update user2 successfully")
-            }
-        })
-    }).fail(function(status) {
-        console.log("failed: " + status)
-    })
-
     for(let i = 0; i < user1_data.scores.length; i++){
-        $.ajax({
-            url: '/scores/' + user1_mongo.scoreId,
-            type: 'PATCH',
-            data: JSON.stringify({
-                "scores": {
-                    "score": user1_data.scores[i],
-                    "tag": user1_data.tags[i]
-                }
-            }),
-            dataType: "json",
-            contentType: 'application/json; charset=utf-8',
-            success: function(res) {
-                console.log("Update user1 scores successfully")
-            }
-        })
+        updateScoreMongo(user1_data, user1_mongo.scoreId, i)
     }
     for(let i = 0; i < user2_data.scores.length; i++){
-        $.ajax({
-            url: '/scores/' + user2_mongo.scoreId,
-            type: 'PATCH',
-            data: JSON.stringify({
-                "scores": {
-                    "score": user2_data.scores[i],
-                    "tag": user2_data.tags[i]
-                }
-            }),
-            dataType: "json",
-            contentType: 'application/json; charset=utf-8',
-            success: function(res) {
-                console.log("Update user2 scores successfully")
-            }
-        })
+        updateScoreMongo(user2_data, user2_mongo.scoreId, i)
     }
 }
 
@@ -344,6 +227,24 @@ function updateUserData(user_data, isBust){
     }
     for (let i in temp_tags){
         user_data.tags.push(temp_tags[i])
+        if (temp_tags[i] == 0){
+            user_data.missed++
+        }
+        else if (temp_tags[i] == 1){
+            user_data.single++
+        }
+        else if (temp_tags[i] == 2){
+            user_data.double++
+        }
+        else if (temp_tags[i] == 3){
+            user_data.triple++
+        }
+        else if (temp_tags[i] == 25 || temp_tags[i] == 50){
+            user_data.bullseye++
+        }
+        else if (temp_tags[i] == 99){
+            user_data.bust++
+        }
     }
     user_data.round++
 }

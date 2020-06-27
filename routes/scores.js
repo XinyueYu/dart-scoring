@@ -39,7 +39,6 @@ router.patch('/:id', getScore, async (req, res) => {
     }
     if (req.body.scores != null){
         res.score.scores.push(req.body.scores)
-        res.score.score_count++
     }
     try {
         const updatedScore = await res.score.save()

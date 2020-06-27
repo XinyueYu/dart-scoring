@@ -55,4 +55,4 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3000/scores/5ef6d542fb6ec097c36a3fb4
+DELETE http://localhost:3000/scores/5ef7047d11e6eca512610296
