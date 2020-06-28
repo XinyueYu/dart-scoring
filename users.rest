@@ -38,15 +38,11 @@ Content-Type: application/json
 
 ###
 
-PATCH http://localhost:3000/users/5ef8242b304afce4ad7039bc
+PATCH http://localhost:3000/users/5ef7040a11e6eca512610291
 Content-Type: application/json
 
 {
-    "name": "Test 3",
-    "scores": {
-        "score": 1,
-        "tag": 2
-    }
+    "max_3_darts": 0
 }
 
 ###
