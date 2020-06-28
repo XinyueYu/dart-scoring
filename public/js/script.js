@@ -5,12 +5,16 @@ var user1_data = {
     score: 301,
     temp_score: 301,
     round: 0,
+    userId: null,
+    scoreId: null,
+    name: "",
+    max: 0,
     single: 0,
     double: 0,
     triple: 0,
     missed: 0,
     bust: 0,
-    bullseye: 0, 
+    bullseye: 0
 }
 var user2_data = {
     scores: [],
@@ -19,6 +23,10 @@ var user2_data = {
     score: 301,
     temp_score: 301,
     round: 0,
+    userId: null,
+    scoreId: null,
+    name: "",
+    max: 0,
     single: 0,
     double: 0,
     triple: 0,
@@ -32,27 +40,18 @@ var temp_sum = 0 // sum of three darts in this round
 var round = 1
 var count_this_round = 0 // 0 to 6
 var count_this_user = 0 // 0 to 3
-var user1_mongo = {
-    userId: null,
-    scoreId: null,
-    name: ""
-}
-var user2_mongo = {
-    userId: null,
-    scoreId: null,
-    name: ""
-}
 var user1_theme_color = "firebrick"
 var user2_theme_color = "forestgreen"
 
 function grabData(idx1, idx2){
     $.get("/users", function(data){
-        user1_mongo.userId = data[idx1]._id
-        user2_mongo.userId = data[idx2]._id
-        user1_mongo.name = data[idx1].name
-        user2_mongo.name = data[idx2].name
-        $(".user1_board p, #user_name_1").text(user1_mongo.name)
-        $(".user2_board p, #user_name_2").text(user2_mongo.name)
+        user1_data.userId = data[idx1]._id
+        user2_data.userId = data[idx2]._id
+        user1_data.name = data[idx1].name
+        user2_data.name = data[idx2].name
+        
+        $(".user1_board p, #user_name_1").text(user1_data.name)
+        $(".user2_board p, #user_name_2").text(user2_data.name)
 
         $("#data_card_1 div span").eq(0).text((data[idx1].win_rate * 100).toFixed(2) + "%")
         $("#data_card_1 div span").eq(1).text(data[idx1].win_min_round)
@@ -64,6 +63,7 @@ function grabData(idx1, idx2){
         $("#data_card_1 div span").eq(7).text(data[idx1].missed)
         $("#data_card_1 div span").eq(8).text(data[idx1].bust)
         $("#data_card_1 div span").eq(9).text(data[idx1].bullseye)
+        $("#data_card_1 div span").eq(10).text(data[idx1].single)
 
         $("#data_card_2 div span").eq(0).text((data[idx2].win_rate * 100).toFixed(2) + "%")
         $("#data_card_2 div span").eq(1).text(data[idx2].win_min_round)
@@ -75,10 +75,11 @@ function grabData(idx1, idx2){
         $("#data_card_2 div span").eq(7).text(data[idx2].missed)
         $("#data_card_2 div span").eq(8).text(data[idx2].bust)
         $("#data_card_2 div span").eq(9).text(data[idx2].bullseye)
+        $("#data_card_2 div span").eq(10).text(data[idx2].single)
     })
     $.get("/scores", function(data){
-        user1_mongo.scoreId = data[idx1]._id
-        user2_mongo.scoreId = data[idx2]._id
+        user1_data.scoreId = data[idx1]._id
+        user2_data.scoreId = data[idx2]._id
     })
 }
 
@@ -90,8 +91,8 @@ $(document).ready(function() {
 //                      Handle Success
 // ---------------------------------------------------------
 
-function updateUserMongo(user_data, id, isWin){
-    $.get("/users/" + id, function(data){
+function updateUserMongo(user_data, isWin){
+    $.get("/users/" + user_data.userId, function(data){
         let update_data = {}
         if (isWin){
             if (data.win_min_round == null || round < data.win_min_round){
@@ -130,13 +131,13 @@ function updateUserMongo(user_data, id, isWin){
         update_data["bullseye"] = data.bullseye + user_data.bullseye
 
         $.ajax({
-            url: '/users/' + id,
+            url: '/users/' + user_data.userId,
             type: 'PATCH',
             data: JSON.stringify(update_data),
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
             success: function(res) {
-                console.log("Update user:"+id+" successfully")
+                console.log("Update user:"+user_data.userId+" successfully")
             }
         })
     }).fail(function(status) {
@@ -144,9 +145,9 @@ function updateUserMongo(user_data, id, isWin){
     })
 }
 
-function updateScoreMongo(user_data, id, i){
+function updateScoreMongo(user_data, i){
     $.ajax({
-        url: '/scores/' + id,
+        url: '/scores/' + user_data.scoreId,
         type: 'PATCH',
         data: JSON.stringify({
             "scores": {
@@ -157,35 +158,35 @@ function updateScoreMongo(user_data, id, i){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(res) {
-            console.log("Update score:"+id+" successfully")
+            console.log("Update score:"+user_data.scoreId+" successfully")
         }
     })
 }
 
 function success(user){
     if (user == "user1"){
-        updateUserMongo(user1_data, user1_mongo.userId, true)
-        updateUserMongo(user2_data, user2_mongo.userId, false)
+        updateUserMongo(user1_data, true)
+        updateUserMongo(user2_data, false)
         $(".end").css("border", "4px solid "+user1_theme_color)
         $(".play_again").css("background-color", user1_theme_color)
-        $("#winner").text(user1_mongo.name)
+        $("#winner").text(user1_data.name)
         $("#winner").css("color", user1_theme_color)
     }
     else{
-        updateUserMongo(user1_data, user1_mongo.userId, false)
-        updateUserMongo(user2_data, user2_mongo.userId, true)
+        updateUserMongo(user1_data, false)
+        updateUserMongo(user2_data, true)
         $(".end").css("border", "4px solid "+user2_theme_color)
         $(".play_again").css("background-color", user2_theme_color)
-        $("#winner").text(user2_mongo.name)
+        $("#winner").text(user2_data.name)
         $("#winner").css("color", user2_theme_color)
     }
     $(".end").fadeIn(400)
 
     for(let i = 0; i < user1_data.scores.length; i++){
-        updateScoreMongo(user1_data, user1_mongo.scoreId, i)
+        updateScoreMongo(user1_data, i)
     }
     for(let i = 0; i < user2_data.scores.length; i++){
-        updateScoreMongo(user2_data, user2_mongo.scoreId, i)
+        updateScoreMongo(user2_data, i)
     }
 }
 
@@ -215,8 +216,6 @@ function log(){
     console.log("round: " + round)
     console.log("count_this_round: " + count_this_round)
     console.log("count_this_user: " + count_this_user)
-    console.log(user1_mongo)
-    console.log(user2_mongo)
 }
 
 function updateUserData(user_data, isBust){
@@ -256,18 +255,25 @@ function updateLocalVars(){
     count_this_user = 0
 }
 
-function updateBoard(user, user_data, val, isBust){
+function updateBoard(user, user_data, valOnBoard, tag){
     $("."+user+"_input").val("")
     $("."+user+"_score p").text(user_data.temp_score)
     $("."+user+"_sum").text(temp_sum)
-    if (isBust){
+    if (tag == 99){
         $("."+user+"_board ul").find("li").remove()
         for (let i = 1; i <= 3; i++){
             $("."+user+"_board ul").append("<li id='"+user+"_li_"+i+"'>-</li>") // Start from li_1
         }
-        return
     }
-    $("."+user+"_board ul").append("<li id='"+user+"_li_"+count_this_user+"'>"+val+"</li>") // Start from li_1
+    else if (tag == 2){
+        $("."+user+"_board ul").append("<li id='"+user+"_li_"+count_this_user+"'>D"+valOnBoard+"</li>") // Start from li_1
+    }
+    else if (tag == 3){
+        $("."+user+"_board ul").append("<li id='"+user+"_li_"+count_this_user+"'>T"+valOnBoard+"</li>") // Start from li_1
+    }
+    else{
+        $("."+user+"_board ul").append("<li id='"+user+"_li_"+count_this_user+"'>"+valOnBoard+"</li>") // Start from li_1
+    }
 }
 
 function updateHisCard(user, isBust){
@@ -284,7 +290,6 @@ function lockInputAndSubmit(userToLock, userToUnlock){
     $("."+userToLock+"_submit").css("pointer-events", "none");
     $("."+userToUnlock+"_input").removeAttr("disabled");
     $("."+userToUnlock+"_submit").css("pointer-events", "auto");
-    $("."+userToUnlock+"_input").click();
 }
 
 function scoreSubmit(user, the_other_user, user_data, val, tag){
@@ -305,23 +310,29 @@ function scoreSubmit(user, the_other_user, user_data, val, tag){
         updateUserData(user_data, true)
         updateLocalVars()
         lockInputAndSubmit(user, the_other_user)
-        updateBoard(user, user_data, val, true)
+        updateBoard(user, user_data, val, 99)
         updateHisCard(user, true)
     }
     else if (user_data.temp_score == 0){
         temp_sum += val
-        tag == 2 || tag == 3 ? temp_scores.push(val/tag) : temp_scores.push(val)
+        if (tag == 2 || tag == 3) {
+            val /= tag
+        }
+        temp_scores.push(val)
         temp_tags.push(tag)
         updateUserData(user_data, false)
-        updateBoard(user, user_data, val, false)
+        updateBoard(user, user_data, val, tag)
         updateHisCard(user, false)
         success(user)
     }
     else{
         temp_sum += val
-        tag == 2 || tag == 3 ? temp_scores.push(val/tag) : temp_scores.push(val)
+        if (tag == 2 || tag == 3) {
+            val /= tag
+        }
+        temp_scores.push(val)
         temp_tags.push(tag)
-        updateBoard(user, user_data, val, false)
+        updateBoard(user, user_data, val, tag)
         if (count_this_user == 3){
             lockInputAndSubmit(user, the_other_user)
             updateHisCard(user, false)

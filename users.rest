@@ -24,7 +24,7 @@ POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-    "name": "Test1"
+    "name": "Test 1"
 }
 
 ###
@@ -33,16 +33,20 @@ POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-    "name": "Test2"
+    "name": "Test 2"
 }
 
 ###
 
-PATCH http://localhost:3000/users/5ef5a505d0370f4a659c970d
+PATCH http://localhost:3000/users/5ef8242b304afce4ad7039bc
 Content-Type: application/json
 
 {
-    "name": "Test3"
+    "name": "Test 3",
+    "scores": {
+        "score": 1,
+        "tag": 2
+    }
 }
 
 ###
