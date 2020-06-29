@@ -20,6 +20,10 @@ var count_this_round = 0 // 0 to 6
 var count_this_user = 0 // 0 to 3
 var user1_theme_color = "firebrick"
 var user2_theme_color = "forestgreen"
+var msgs = {
+    wrong_button_msg: "Wrong Button Clicked",
+    invalid_input_msg: "Invalid number",
+}
 
 // ---------------------------------------------------------
 //                 Load Data & Render
@@ -37,32 +41,10 @@ function grabData(idx1, idx2){
         for (let i in data[idx2]){
             user2_data[i] = data[idx2][i]
         }
-        
+        updateDataCard("user1", user1_data, true)
+        updateDataCard("user2", user2_data, true)
         $(".user1_board p, #user_name_1").text(user1_data.name)
         $(".user2_board p, #user_name_2").text(user2_data.name)
-
-        $("#data_card_1 div span").eq(0).text((user1_data.win_rate * 100).toFixed(2) + "%")
-        $("#data_card_1 div span").eq(1).text(user1_data.win_min_round)
-        $("#data_card_1 div span").eq(2).text((user1_data.win_avg_round * 1).toFixed(2))
-        $("#data_card_1 div span").eq(3).text(user1_data.max_3_darts)
-        $("#data_card_1 div span").eq(4).text((user1_data.avg_3_darts * 1).toFixed(2))
-        $("#data_card_1 div span").eq(5).text(user1_data.double)
-        $("#data_card_1 div span").eq(6).text(user1_data.triple)
-        $("#data_card_1 div span").eq(7).text(user1_data.missed)
-        $("#data_card_1 div span").eq(8).text(user1_data.bust)
-        $("#data_card_1 div span").eq(9).text(user1_data.bullseye)
-
-        $("#data_card_2 div span").eq(0).text((user2_data.win_rate * 100).toFixed(2) + "%")
-        $("#data_card_2 div span").eq(1).text(user2_data.win_min_round)
-        $("#data_card_2 div span").eq(2).text((user2_data.win_avg_round * 1).toFixed(2))
-        $("#data_card_2 div span").eq(3).text(user2_data.max_3_darts)
-        $("#data_card_2 div span").eq(4).text((user2_data.avg_3_darts * 1).toFixed(2))
-        $("#data_card_2 div span").eq(5).text(user2_data.double)
-        $("#data_card_2 div span").eq(6).text(user2_data.triple)
-        $("#data_card_2 div span").eq(7).text(user2_data.missed)
-        $("#data_card_2 div span").eq(8).text(user2_data.bust)
-        $("#data_card_2 div span").eq(9).text(user2_data.bullseye)
-
     }).fail(function(status) {
         console.log("failed: " + status)
     })
@@ -73,6 +55,24 @@ function grabData(idx1, idx2){
     }).fail(function(status) {
         console.log("failed: " + status)
     })
+}
+
+function updateDataCard(user, user_data, isStart){
+    let userNum
+    user == "user1" ? userNum = 1 : userNum = 2
+    if (isStart){
+        $("#data_card_"+userNum+" div span").eq(0).text((user_data.win_rate * 100).toFixed(2) + "%")
+        $("#data_card_"+userNum+" div span").eq(1).text(user_data.win_min_round)
+        $("#data_card_"+userNum+" div span").eq(2).text((user_data.win_avg_round * 1).toFixed(2))
+    }
+    $("#data_card_"+userNum+" div span").eq(3).text(user_data.max_3_darts)
+    $("#data_card_"+userNum+" div span").eq(4).text((user_data.avg_3_darts * 1).toFixed(2))
+    $("#data_card_"+userNum+" div span").eq(5).text(user_data.double)
+    $("#data_card_"+userNum+" div span").eq(6).text(user_data.triple)
+    $("#data_card_"+userNum+" div span").eq(7).text(user_data.missed)
+    $("#data_card_"+userNum+" div span").eq(8).text(user_data.bust)
+    $("#data_card_"+userNum+" div span").eq(9).text(user_data.bullseye)
+    $("#data_card_"+userNum+" div span").eq(10).text(user_data.single)
 }
 
 // ---------------------------------------------------------
@@ -96,14 +96,13 @@ function success(user){
         $("#winner").text(user2_data.name)
         $("#winner").css("color", user2_theme_color)
     }
-    $(".end").fadeIn(400)
-
     for(let i = 0; i < user1_data.scores.length; i++){
         updateScoreMongo(user1_data, i)
     }
     for(let i = 0; i < user2_data.scores.length; i++){
         updateScoreMongo(user2_data, i)
     }
+    $(".end").fadeIn(400)
 }
 
 function updateUserMongo(user_data, isWin){
@@ -134,13 +133,13 @@ function updateUserMongo(user_data, isWin){
     update_data["bullseye"] = user_data.bullseye
 
     $.ajax({
-        url: '/users/' + user_data.userId,
+        url: '/users/' + user_data._id,
         type: 'PATCH',
         data: JSON.stringify(update_data),
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(res) {
-            console.log("Update user:"+user_data.userId+" successfully")
+            console.log("Update user:"+user_data._id+" successfully")
         }
     })
 }
@@ -177,48 +176,64 @@ $(".user2_input").keydown(function(event){
        $(".user2_submit").eq(0).click();
     }
 })
+$(".user1_input, .user2_input").focus(function(){
+    $(this).val("")
+})
 
 $(".user1_submit").click(function(){
+    let val = $(".user1_input").val() == "" ? 0 : Number($(".user1_input").val())
+    if (checkVal(val)) return alert(msgs.invalid_input_msg)
+    let tag = 1
+    if ($(this).attr("id") == "user1_submit_2"){
+        if (checkProduct(val)) return alert(msgs.wrong_button_msg)
+        tag = 2
+        val *= 2
+    }
+    else if($(this).attr("id") == "user1_submit_3"){
+        if (checkProduct(val)) return alert(msgs.wrong_button_msg)
+        tag = 3
+        val *= 3
+    }
+    else if (val == 0 || val == 25 || val == 50){
+        tag = val
+    }
     if (round == 1){
         $(".user2_input").attr("disabled","disabled");
         $(".user2_submit").css("pointer-events", "none");
     }
+    scoreSubmit("user1", "user2", user1_data, val, tag)
+})
+$(".user2_submit").click(function(){
+    let val = $(".user2_input").val() == "" ? 0 : Number($(".user2_input").val())
+    if (checkVal(val)) return alert(msgs.invalid_input_msg)
     let tag = 1
-    let val = $(".user1_input").val() == "" ? 0 : Number($(".user1_input").val())
-    if($(this).attr("id") == "user1_submit_2"){
-        val *= 2
+    if ($(this).attr("id") == "user2_submit_2"){
+        if (checkProduct(val)) return alert(msgs.wrong_button_msg)
         tag = 2
+        val *= 2
     }
-    else if($(this).attr("id") == "user1_submit_3"){
-        val *= 3
+    else if($(this).attr("id") == "user2_submit_3"){
+        if (checkProduct(val)) return alert(msgs.wrong_button_msg)
         tag = 3
+        val *= 3
     }
     else if (val == 0 || val == 25 || val == 50){
         tag = val
     }
-    scoreSubmit("user1", "user2", user1_data, val, tag)
-})
-$(".user2_submit").click(function(){
     if (round == 1){
         $(".user1_input").attr("disabled","disabled");
         $(".user1_submit").css("pointer-events", "none");
     }
-    let tag = 1
-    let val = $(".user2_input").val() == "" ? 0 : Number($(".user2_input").val())
-    if($(this).attr("id") == "user2_submit_2"){
-        val *= 2
-        tag = 2
-    }
-    else if($(this).attr("id") == "user2_submit_3"){
-        val *= 3
-        tag = 3
-    }
-    else if (val == 0 || val == 25 || val == 50){
-        tag = val
-    }
     scoreSubmit("user2", "user1", user2_data, val, tag)
 })
 
+function checkVal(val){
+    return (!Number.isInteger(val)) || val < 0 || (val > 20 && val != 25 && val != 50 )
+}
+
+function checkProduct(val){
+    return val == 0 || val == 25 || val == 50
+}
 
 function scoreSubmit(user, the_other_user, user_data, val, tag){
     if (count_this_round == 6){
@@ -235,12 +250,12 @@ function scoreSubmit(user, the_other_user, user_data, val, tag){
         temp_scores = [0]
         temp_tags = [99]
         count_this_round += (3 - count_this_user)
-        updateUserData(user_data, true)
+        updateUserData(user_data, true) // boolean: isBust
         updateLocalVars()
         lockInputAndSubmit(user, the_other_user)
         updateBoard(user, user_data, val, 99)
-        updateHisCard(user, true)
-        updateDataCard(user, user_data)
+        updateHisCard(user, true) // boolean: isBust
+        updateDataCard(user, user_data, false) // boolean: isStart
     }
     else if (user_data.temp_score == 0){
         temp_sum += val
@@ -249,10 +264,10 @@ function scoreSubmit(user, the_other_user, user_data, val, tag){
         }
         temp_scores.push(val)
         temp_tags.push(tag)
-        updateUserData(user_data, false)
+        updateUserData(user_data, false) // boolean: isBust
         updateBoard(user, user_data, val, tag)
-        updateHisCard(user, false)
-        updateDataCard(user, user_data)
+        updateHisCard(user, false) // boolean: isBust
+        updateDataCard(user, user_data, false) // boolean: isStart
         success(user)
     }
     else{
@@ -265,9 +280,9 @@ function scoreSubmit(user, the_other_user, user_data, val, tag){
         updateBoard(user, user_data, val, tag)
         if (count_this_user == 3){
             lockInputAndSubmit(user, the_other_user)
-            updateHisCard(user, false)
-            updateUserData(user_data, false)
-            updateDataCard(user, user_data)
+            updateHisCard(user, false) // boolean: isBust
+            updateUserData(user_data, false) // boolean: isBust
+            updateDataCard(user, user_data, false) // boolean: isStart
             updateLocalVars()
         }
     }
@@ -348,19 +363,6 @@ function updateHisCard(user, isBust){
     $("."+user+"_his_score ul").append("<li>"+temp_sum+"</li>")
 }
 
-function updateDataCard(user, user_data){
-    let userNum
-    user == "user1" ? userNum = 1 : userNum = 2
-    $("#data_card_"+userNum+" div span").eq(3).text(user_data.max_3_darts)
-    $("#data_card_"+userNum+" div span").eq(4).text((user_data.avg_3_darts * 1).toFixed(2))
-    $("#data_card_"+userNum+" div span").eq(5).text(user_data.double)
-    $("#data_card_"+userNum+" div span").eq(6).text(user_data.triple)
-    $("#data_card_"+userNum+" div span").eq(7).text(user_data.missed)
-    $("#data_card_"+userNum+" div span").eq(8).text(user_data.bust)
-    $("#data_card_"+userNum+" div span").eq(9).text(user_data.bullseye)
-    $("#data_card_"+userNum+" div span").eq(10).text(user_data.single)
-}
-
 function lockInputAndSubmit(userToLock, userToUnlock){
     $("."+userToLock+"_input").attr("disabled","disabled");
     $("."+userToLock+"_submit").css("pointer-events", "none");
@@ -386,4 +388,29 @@ function log(){
 
 $(".play_again").click(function(){
     location.reload(true);
+})
+
+$(".end").bind("mousedown", function(event){
+    let ori_top = $(this).offset().top
+    let ori_left = $(this).offset().left
+    $(this).css({
+        top: ori_top,
+        left: ori_left,
+        margin: 0
+    })
+    let mouse_ori_x = event.pageX
+    let mouse_ori_y = event.pageY
+    $(document).bind("mousemove",function(ev){
+        let mouse_move_x = ev.pageX - mouse_ori_x
+        let mouse_move_y = ev.pageY - mouse_ori_y
+        let new_top = ori_top + mouse_move_y + "px"
+        let new_left = ori_left + mouse_move_x + "px"
+        $(".end").css({
+            top: new_top,
+            left: new_left
+        })
+    })
+    $(document).bind("mouseup",function(){
+        $(this).unbind("mousemove")
+    })
 })

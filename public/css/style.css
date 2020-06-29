@@ -1,9 +1,16 @@
 @charset "utf-8";
 
+@media screen and (max-width: 622px) {
+    .round {
+        display: none;
+    }
+}
+
 body{
     margin: 0;
     min-height: 100vh;
-    font-family: Arial
+    font-family: Arial;
+    user-select: none;  
 }
 p{
     margin: 0;
@@ -17,9 +24,22 @@ ul{
 li{
     list-style: none;
 }
-.data_card::-webkit-scrollbar, .history_card::-webkit-scrollbar{
-    width: 0px;
+.data_scroll::-webkit-scrollbar, .scroll::-webkit-scrollbar{
+    width: 5px;
+    height: 800px;
+    background-color: #aaa;
 }
+/* .data_scroll::-webkit-scrollbar-track, .scroll::-webkit-scrollbar-track{
+    background-color: magenta;
+}
+.data_scroll::-webkit-scrollbar-thumb, .scroll::-webkit-scrollbar-thumb{
+    background-color: yellow;
+    border-radius: 10px;
+}
+.data_scroll::-webkit-scrollbar-track-piece, .scroll::-webkit-scrollbar-track-piece{
+    background-color: linen;
+    border-radius: 10px;
+} */
 
 #data_card_1, #score_card_1, #history_card_1, .user1_board p{
     background-color: firebrick;
@@ -29,10 +49,10 @@ li{
     background-color: forestgreen;
     color: white;
 }
-.user1_sum, .user1_board li{
+#user_name_1, .user1_sum, .user1_board li{
     color: firebrick;
 }
-.user2_sum, .user2_board li{
+#user_name_2,.user2_sum, .user2_board li{
     color: forestgreen;
 }
 .user1_sum{
@@ -160,7 +180,6 @@ li{
 }
 
 .score_card{
-    height: 40%;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
@@ -169,7 +188,9 @@ li{
     padding: 10px 20px;
 }
 .data_card{
-    height: 60%;
+    display: flex;
+    flex-direction: column;
+    height: 80%;
     margin: 20px;
     margin-top: 0;
     padding: 10px 20px;
@@ -190,8 +211,10 @@ li{
 }
 
 .user_name{
-    font-size: 32px;
-    line-height: 32px;
+    line-height: 36px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    background-color: linen;
 }
 .score_wrap{
     display: flex;
@@ -214,12 +237,23 @@ li{
     right: -60px;
     top: -70px;
 }
-
+.data_card p{
+    border-bottom: 2px solid white;
+    text-align: center;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+    font-size: 24px;
+    line-height: 30px;
+}
+.data_scroll{
+    overflow-y: auto;
+}
 .label{
     display: flex;
     justify-content: space-around;
     border-bottom: 2px solid white;
     padding-bottom: 4px;
+    margin-bottom: 4px;
 }
 .scroll{
     display: flex;
@@ -258,7 +292,7 @@ li{
     width: 500px;
     height: 300px;
     background-color: white;
-    box-shadow: 0 0 0 1920px rgba(0, 0, 0, .5);
+    box-shadow: 0 0 0 1920px rgba(0, 0, 0, .6);
     position: absolute;
     left: 0;
     right: 0;
