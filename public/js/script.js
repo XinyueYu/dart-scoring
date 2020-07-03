@@ -20,6 +20,7 @@ var count_this_round = 0 // 0 to 6
 var count_this_user = 0 // 0 to 3
 var user1_theme_color = "firebrick"
 var user2_theme_color = "forestgreen"
+var mongo_status = 0
 var msgs = {
     wrong_button_msg: "Wrong Button Clicked",
     invalid_input_msg: "Invalid number",
@@ -30,7 +31,7 @@ var msgs = {
 // ---------------------------------------------------------
 
 $(document).ready(function() {
-    grabData(2,3)
+    grabData(0,1)
 })
 
 function grabData(idx1, idx2){
@@ -61,18 +62,17 @@ function updateDataCard(user, user_data, isStart){
     let userNum
     user == "user1" ? userNum = 1 : userNum = 2
     if (isStart){
-        $("#data_card_"+userNum+" div span").eq(0).text((user_data.win_rate * 100).toFixed(2) + "%")
-        $("#data_card_"+userNum+" div span").eq(1).text(user_data.win_min_round)
-        $("#data_card_"+userNum+" div span").eq(2).text((user_data.win_avg_round * 1).toFixed(2))
+        $("#data_card_"+userNum+" ul li span").eq(0).text((user_data.win_rate * 100).toFixed(2) + "%")
+        $("#data_card_"+userNum+" ul li span").eq(1).text(user_data.win_min_round)
+        $("#data_card_"+userNum+" ul li span").eq(2).text((user_data.win_avg_round * 1).toFixed(2))
     }
-    $("#data_card_"+userNum+" div span").eq(3).text(user_data.max_3_darts)
-    $("#data_card_"+userNum+" div span").eq(4).text((user_data.avg_3_darts * 1).toFixed(2))
-    $("#data_card_"+userNum+" div span").eq(5).text(user_data.double)
-    $("#data_card_"+userNum+" div span").eq(6).text(user_data.triple)
-    $("#data_card_"+userNum+" div span").eq(7).text(user_data.missed)
-    $("#data_card_"+userNum+" div span").eq(8).text(user_data.bust)
-    $("#data_card_"+userNum+" div span").eq(9).text(user_data.bullseye)
-    $("#data_card_"+userNum+" div span").eq(10).text(user_data.single)
+    $("#data_card_"+userNum+" ul li span").eq(3).text(user_data.max_3_darts)
+    $("#data_card_"+userNum+" ul li span").eq(4).text((user_data.avg_3_darts * 1).toFixed(2))
+    $("#data_card_"+userNum+" ul li span").eq(5).text(user_data.double)
+    $("#data_card_"+userNum+" ul li span").eq(6).text(user_data.triple)
+    $("#data_card_"+userNum+" ul li span").eq(7).text(user_data.missed)
+    $("#data_card_"+userNum+" ul li span").eq(8).text(user_data.bust)
+    $("#data_card_"+userNum+" ul li span").eq(9).text(user_data.bullseye)
 }
 
 // ---------------------------------------------------------
@@ -139,6 +139,7 @@ function updateUserMongo(user_data, isWin){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(res) {
+            mongo_status++
             console.log("Update user:"+user_data._id+" successfully")
         }
     })
@@ -157,6 +158,7 @@ function updateScoreMongo(user_data, i){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(res) {
+            mongo_status++
             console.log("Update score:"+user_data.scoreId+" successfully")
         }
     })

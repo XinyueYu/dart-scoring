@@ -19,27 +19,28 @@ p{
 ul{
     margin: 0;
     padding: 0;
+}
+.board ul{
     text-align: center;
 }
 li{
     list-style: none;
 }
+.data_card li{
+    list-style: auto;
+}
 .data_scroll::-webkit-scrollbar, .scroll::-webkit-scrollbar{
     width: 5px;
-    height: 800px;
-    background-color: #aaa;
-}
-/* .data_scroll::-webkit-scrollbar-track, .scroll::-webkit-scrollbar-track{
-    background-color: magenta;
+    border-radius: 10px;
 }
 .data_scroll::-webkit-scrollbar-thumb, .scroll::-webkit-scrollbar-thumb{
-    background-color: yellow;
+    background-color: white;
     border-radius: 10px;
 }
 .data_scroll::-webkit-scrollbar-track-piece, .scroll::-webkit-scrollbar-track-piece{
-    background-color: linen;
+    background-color: rgba(255,255,255,.5);
     border-radius: 10px;
-} */
+}
 
 #data_card_1, #score_card_1, #history_card_1, .user1_board p{
     background-color: firebrick;
@@ -251,9 +252,9 @@ li{
 .label{
     display: flex;
     justify-content: space-around;
-    border-bottom: 2px solid white;
-    padding-bottom: 4px;
-    margin-bottom: 4px;
+    /* border-bottom: 2px solid white; */
+    /* padding-bottom: 4px;
+    margin-bottom: 4px; */
 }
 .scroll{
     display: flex;
