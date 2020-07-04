@@ -20,7 +20,6 @@ var count_this_round = 0 // 0 to 6
 var count_this_user = 0 // 0 to 3
 var user1_theme_color = "firebrick"
 var user2_theme_color = "forestgreen"
-var mongo_status = 0
 var msgs = {
     wrong_button_msg: "Wrong Button Clicked",
     invalid_input_msg: "Invalid number",
@@ -139,7 +138,6 @@ function updateUserMongo(user_data, isWin){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(res) {
-            mongo_status++
             console.log("Update user:"+user_data._id+" successfully")
         }
     })
@@ -158,7 +156,6 @@ function updateScoreMongo(user_data, i){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(res) {
-            mongo_status++
             console.log("Update score:"+user_data.scoreId+" successfully")
         }
     })

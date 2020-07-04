@@ -1,11 +1,42 @@
 @charset "utf-8";
 
-@media screen and (max-width: 622px) {
-    .round {
-        display: none;
+/* @media only screen and (min-width: 800px){
+    html {
+        font-size: 39.06%
+    }
+} */
+
+/* @media only screen and (min-width: 1024px){
+    html {
+        font-size: 50%!important
+    }
+} */
+
+@media only screen and (min-width: 1280px){
+    html {
+        font-size: 62.5%!important
     }
 }
 
+@media only screen and (min-width: 1440px){
+    html {
+        font-size: 70.31%!important
+    }
+}
+@media only screen and (min-width: 1680px){
+    html {
+        font-size: 82.03%!important
+    }
+}
+@media only screen and (min-width: 1920px){
+    html {
+        font-size: 93.75%!important
+    }
+}
+
+html{
+    font-size: 62.5%
+}
 body{
     margin: 0;
     min-height: 100vh;
@@ -58,9 +89,11 @@ li{
 }
 .user1_sum{
     border-right: 2px solid firebrick;
+    border-right: 0.2rem solid firebrick;
 }
 .user2_sum{
     border-right: 2px solid forestgreen;
+    border-right: 0.2rem solid forestgreen;
 }
 .board, .round, .user1_input, .user2_input, .user1_submit, .user2_submit{
     background-color: linen;
@@ -68,14 +101,20 @@ li{
 .board, .round, .user1_input, .user2_input, .user1_submit, .user2_submit, .play_again{
     border-radius: 20px;
     box-shadow: 2px 2px 2px grey;
+    border-radius: 2rem;
+    box-shadow: 0.2rem 0.2rem 0.2rem grey;
 }
 #score_card_1, #data_card_1, #history_card_1{
     border-radius: 20px;
     box-shadow: 2px 2px 4px #660000;
+    border-radius: 2rem;
+    box-shadow: 0.2rem 0.2rem 0.4rem #660000;
 }
 #score_card_2, #data_card_2, #history_card_2{
     border-radius: 20px;
     box-shadow: 2px 2px 4px #38471f;
+    border-radius: 2rem;
+    box-shadow: 0.2rem 0.2rem 0.4rem #38471f;
 }
 
 .score_card:hover, .data_card:hover, .board:hover, .round:hover{
@@ -99,6 +138,12 @@ li{
     height: 100px;
     border-radius: 20px;
     padding: 0 10px;
+    left: 2rem;
+    top: 2rem;
+    width: 44.2rem;
+    height: 10rem;
+    border-radius: 2rem;
+    padding: 0 1rem;
 }
 .board_wrap{
     display: flex;
@@ -109,58 +154,90 @@ li{
     flex-direction: column;
 }
 .user1_board, .user2_board{
+    display: flex;
+    text-align: center;
     width: 100%;
     height: 36px;
     line-height: 36px;
     font-size: 24px;
     border-radius: 20px;
-    display: flex;
-    text-align: center;
+    height: 3.6rem;
+    line-height: 3.6rem;
+    font-size: 2.4rem;
+    border-radius: 2rem;
 }
 .user1_board p, .user2_board p{
-    width: 120px;
     border-radius: 20px;
+    width: 120px;
+    border-radius: 2rem;
+    width: 12rem;
 }
 .user1_board ul li, .user2_board ul li{
     float: left;
     width: 80px;
+    width: 8rem;
 }
 .user1_sum, .user2_sum{
     width: 80px;
+    width: 8rem;
 }
 
+@media screen and (max-width: 622px) {
+    .round {
+        display: none;
+    }
+}
 .round{
     position: absolute;
+    border-radius: 100px;
     right: 20px;
     top: 20px;
     width: 100px;
     height: 100px;
-    border-radius: 100px;
     margin: 0 10px;
+    border-radius: 10rem;
+    right: 2rem;
+    top: 2rem;
+    width: 10rem;
+    height: 10rem;
+    margin: 0 1rem;
 }
 .round p{
-    font-size: 60px;
     margin: 0;
     text-align: center;
     line-height: 100px;
+    font-size: 60px;
+    line-height: 10rem;
+    font-size: 6rem;
 }
 
 .wrapper{
     display: flex;
+    /* background-color: rosybrown;
+    background-image: linear-gradient(90deg, rgba(255,255,255,.07) 50%, transparent 50%),
+    linear-gradient(90deg, rgba(255,255,255,.13) 50%, transparent 50%),
+    linear-gradient(90deg, transparent 50%, rgba(255,255,255,.17) 50%),
+    linear-gradient(90deg, transparent 50%, rgba(255,255,255,.19) 50%);
+    background-size: 13px, 29px, 37px, 53px; */
+    background:
+    radial-gradient(#8c6026 4px, transparent 0px),
+    radial-gradient(#8c6026 4px, transparent 0px),
+    linear-gradient(burlywood 4px, transparent 0px),
+    linear-gradient(45deg, transparent 74px, transparent 75px, #8c6026 75px, #8c6026 76px, transparent 77px, transparent 109px),
+    linear-gradient(-45deg, transparent 75px, transparent 76px, #8c6026 76px, #8c6026 77px, transparent 78px, transparent 109px),
+    burlywood;
+    background-size: 109px 109px, 109px 109px,100% 6px, 109px 109px, 109px 109px;
+    background-position: 54px 55px, 0px 0px, 0px 0px, 0px 0px, 0px 0px;
 }
 .panel{
+    display: flex;
+    flex-direction: column;
     height: 100vh;
     width: 50vw;
     min-height: 600px;
-    min-width: 620px;
-    display: flex;
-    flex-direction: column;
-}
-#panel_1{
-    background-color: burlywood;
-}
-#panel_2{
-    background-color: burlywood;
+    min-width: 640px;
+    min-height: 60rem;
+    min-width: 64rem;
 }
 .main_wrap{
     height: 86%;
@@ -173,11 +250,13 @@ li{
     justify-content: center;
 }
 .left_panel{
-    margin-top: 120px;
-    width: 60%;
-    min-width: 360px;
     display: flex;
     flex-direction: column;
+    width: 60%;
+    min-width: 348px;
+    margin-top: 120px;
+    min-width: 34.8rem;
+    margin-top: 12rem;
 }
 
 .score_card{
@@ -185,37 +264,51 @@ li{
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
+    flex-grow: 1;
     margin: 20px;
     padding: 10px 20px;
+    margin: 2rem;
+    padding: 1rem 2rem;
 }
 .data_card{
     display: flex;
     flex-direction: column;
-    height: 80%;
-    margin: 20px;
-    margin-top: 0;
+    flex-grow: 4;
+    overflow-y: auto;
+    margin: 0 20px 20px 20px;
     padding: 10px 20px;
     font-size: 20px;
     line-height: 24px;
-    overflow-y: auto;
+    margin: 0 2rem 2rem 2rem;
+    padding: 1rem 2rem;
+    font-size: 2rem;
+    line-height: 2.4rem;
 }
 .history_card{
-    width: 40%;
-    min-width: 200px;
     display: flex;
     flex-direction: column;
-    margin: 140px 20px 20px 0;
     text-align: center;
+    width: 40%;
+    min-width: 232px;
+    margin: 140px 20px 20px 0;
     font-size: 24px;
     padding: 10px 20px;
     line-height: 30px;
+    min-width: 23.2rem;
+    margin: 14rem 2rem 2rem 0;
+    font-size: 2.4rem;
+    padding: 1rem 2rem;
+    line-height: 3rem;
 }
 
 .user_name{
+    background-color: linen;
     line-height: 36px;
     border-radius: 20px;
     margin-bottom: 10px;
-    background-color: linen;
+    line-height: 3.6rem;
+    border-radius: 2rem;
+    margin-bottom: 1rem;
 }
 .score_wrap{
     display: flex;
@@ -229,22 +322,32 @@ li{
 .user1_score p, .user2_score p{
     font-size: 120px;
     line-height: 120px;
+    font-size: 12rem;
+    line-height: 12rem;
 }
 .user1_minus, .user2_minus{
     display: none;
     position: absolute;
-    font-size: 60px;
     color: white;
+    font-size: 60px;
     right: -60px;
     top: -70px;
+    font-size: 6rem;
+    right: -6rem;
+    top: -7rem;
 }
 .data_card p{
-    border-bottom: 2px solid white;
     text-align: center;
+    border-bottom: 2px solid white;
     padding-bottom: 4px;
     margin-bottom: 4px;
     font-size: 24px;
     line-height: 30px;
+    border-bottom: 0.2rem solid white;
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.4rem;
+    font-size: 2.4rem;
+    line-height: 3rem;
 }
 .data_scroll{
     overflow-y: auto;
@@ -252,14 +355,12 @@ li{
 .label{
     display: flex;
     justify-content: space-around;
-    /* border-bottom: 2px solid white; */
-    /* padding-bottom: 4px;
-    margin-bottom: 4px; */
 }
 .scroll{
     display: flex;
     overflow-y: auto;
     margin-top: 4px;
+    margin-top: 0.4rem;
 }
 
 .user1_his_round, .user2_his_round, .user1_his_score, .user2_his_score{
@@ -271,27 +372,31 @@ li{
 
 .user1_input, .user2_input, .user1_submit, .user2_submit{
     text-align: center;
-    border: 0px;
-    font-size: 30px;
     outline: none;
+    border: 0;
+    font-size: 30px;
+    font-size: 3rem;
 }
 .user1_input, .user2_input{
     padding: 10px 40px;
     width: 200px;
     line-height: 30px;
+    padding: 1rem 4rem;
+    width: 20rem;
+    line-height: 3rem;
 }
 .user1_submit, .user2_submit{
+    cursor: pointer;
     padding: 10px 20px;
     margin-left: 16px;
     line-height: 34px;
-    cursor: pointer;
+    padding: 1rem 2rem;
+    margin-left: 1.6rem;
+    line-height: 3.4rem;
 }
 
 .end{
     display: none;
-    border-radius: 20px;
-    width: 500px;
-    height: 300px;
     background-color: white;
     box-shadow: 0 0 0 1920px rgba(0, 0, 0, .6);
     position: absolute;
@@ -301,6 +406,13 @@ li{
     bottom: 0;
     margin: auto;
     font-size: 32px;
+    width: 500px;
+    height: 300px;
+    border-radius: 20px;
+    font-size: 3.2rem;
+    width: 50rem;
+    height: 30rem;
+    border-radius: 2rem;
 }
 .end_wrap{
     display: flex;
@@ -310,9 +422,11 @@ li{
     height: 100%;
 }
 .play_again{
+    cursor: pointer;
     text-align: center;
     color: white;
     width: 200px;
     padding: 10px 40px;
-    cursor: pointer;
+    width: 20rem;
+    padding: 1rem 4rem;
 }
