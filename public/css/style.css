@@ -1,16 +1,16 @@
 @charset "utf-8";
 
-/* @media only screen and (min-width: 800px){
+@media only screen and (min-width: 800px){
     html {
         font-size: 39.06%
     }
-} */
+}
 
-/* @media only screen and (min-width: 1024px){
+@media only screen and (min-width: 1024px){
     html {
         font-size: 50%!important
     }
-} */
+}
 
 @media only screen and (min-width: 1280px){
     html {
@@ -35,7 +35,7 @@
 }
 
 html{
-    font-size: 62.5%
+    font-size: 39.06%
 }
 body{
     margin: 0;
@@ -49,17 +49,25 @@ p{
 }
 ul{
     margin: 0;
+}
+.board ul, .history_card ul{
+    text-align: center;
     padding: 0;
 }
-.board ul{
-    text-align: center;
-}
-li{
+.board li, .history_card li{
     list-style: none;
+}
+.data_card ul{
+    padding-left: 20px;
+    padding-left: 2rem;
 }
 .data_card li{
     list-style: auto;
 }
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
 .data_scroll::-webkit-scrollbar, .scroll::-webkit-scrollbar{
     width: 5px;
     border-radius: 10px;
@@ -72,6 +80,7 @@ li{
     background-color: rgba(255,255,255,.5);
     border-radius: 10px;
 }
+
 
 #data_card_1, #score_card_1, #history_card_1, .user1_board p{
     background-color: firebrick;
@@ -117,17 +126,32 @@ li{
     box-shadow: 0.2rem 0.2rem 0.4rem #38471f;
 }
 
-.score_card:hover, .data_card:hover, .board:hover, .round:hover{
+.score_card:hover, .data_card:hover, .history_card:hover, .board:hover{
     transform: scale(1.015);
-}
-.history_card:hover{
-    transform: scale(1.01);
 }
 .user1_submit:hover, .user2_submit:hover{
     transform: scale(1.1);
 }
-.score_card, .data_card, .history_card, .board, .round, .user1_submit, .user2_submit{
+.score_card, .data_card, .history_card, .board, .user1_submit, .user2_submit{
     transition: all 0.1s ease-in-out;
+}
+
+@keyframes scaleDraw{
+    0%{
+        transform: scale(0.85);
+    }
+    50%{
+        transform: scale(1);
+    }
+    100%{
+        transform: scale(0.85);
+    }
+}
+.round{
+    -webkit-animation-name: scaleDraw;
+    -webkit-animation-timing-function: ease-in-out;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-duration: 1.5s;
 }
 
 .board{
@@ -182,11 +206,6 @@ li{
     width: 8rem;
 }
 
-@media screen and (max-width: 622px) {
-    .round {
-        display: none;
-    }
-}
 .round{
     position: absolute;
     border-radius: 100px;
@@ -223,8 +242,8 @@ li{
     radial-gradient(#8c6026 4px, transparent 0px),
     radial-gradient(#8c6026 4px, transparent 0px),
     linear-gradient(burlywood 4px, transparent 0px),
-    linear-gradient(45deg, transparent 74px, transparent 75px, #8c6026 75px, #8c6026 76px, transparent 77px, transparent 109px),
-    linear-gradient(-45deg, transparent 75px, transparent 76px, #8c6026 76px, #8c6026 77px, transparent 78px, transparent 109px),
+    linear-gradient(45deg, transparent 74px, transparent 75px, #64451b 75px, #64451b 76px, transparent 77px, transparent 109px),
+    linear-gradient(-45deg, transparent 75px, transparent 76px, #64451b 76px, #64451b 77px, transparent 78px, transparent 109px),
     burlywood;
     background-size: 109px 109px, 109px 109px,100% 6px, 109px 109px, 109px 109px;
     background-position: 54px 55px, 0px 0px, 0px 0px, 0px 0px, 0px 0px;
@@ -240,14 +259,16 @@ li{
     min-width: 64rem;
 }
 .main_wrap{
-    height: 86%;
     display: flex;
+    flex-grow: 4;
 }
 .input_wrap{
-    height: 14%;
     display: flex;
     align-items: flex-start;
     justify-content: center;
+    flex-grow: 1;
+    padding-bottom: 40px;
+    padding-bottom: 4rem;
 }
 .left_panel{
     display: flex;
@@ -292,23 +313,25 @@ li{
     min-width: 232px;
     margin: 140px 20px 20px 0;
     font-size: 24px;
-    padding: 10px 20px;
+    padding: 10px 20px 20px 20px;
     line-height: 30px;
     min-width: 23.2rem;
     margin: 14rem 2rem 2rem 0;
     font-size: 2.4rem;
-    padding: 1rem 2rem;
+    padding: 1rem 2rem 2rem 2rem;
     line-height: 3rem;
 }
 
 .user_name{
     background-color: linen;
-    line-height: 36px;
+    line-height: 40px;
     border-radius: 20px;
-    margin-bottom: 10px;
-    line-height: 3.6rem;
+    padding-left: 10px;
+    padding-right: 10px;
+    line-height: 4rem;
     border-radius: 2rem;
-    margin-bottom: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 .score_wrap{
     display: flex;
@@ -355,12 +378,14 @@ li{
 .label{
     display: flex;
     justify-content: space-around;
+    padding-top: 10px;
+    padding-top: 1rem;
+    padding-bottom: 4px;
+    padding-bottom: 0.4rem;
 }
 .scroll{
     display: flex;
     overflow-y: auto;
-    margin-top: 4px;
-    margin-top: 0.4rem;
 }
 
 .user1_his_round, .user2_his_round, .user1_his_score, .user2_his_score{

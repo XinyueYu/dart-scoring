@@ -18,11 +18,15 @@ var temp_sum = 0 // sum of three darts in this round
 var round = 1
 var count_this_round = 0 // 0 to 6
 var count_this_user = 0 // 0 to 3
+var user1IsPlaying = false
 var user1_theme_color = "firebrick"
 var user2_theme_color = "forestgreen"
 var msgs = {
-    wrong_button_msg: "Wrong Button Clicked",
-    invalid_input_msg: "Invalid number",
+    wrong_button_msg: "Wrong button clicked.",
+    invalid_input_msg: "Invalid number entered.",
+    incomplete_round_msg: "Please enter 3 scores before switching player.",
+    switch_player_msg: "Please switch player.",
+    back_button_msg: "Game started! You should not leave this page."
 }
 
 // ---------------------------------------------------------
@@ -30,7 +34,11 @@ var msgs = {
 // ---------------------------------------------------------
 
 $(document).ready(function() {
-    grabData(0,1)
+    grabData(2,3)
+    window.addEventListener('popstate', function () {
+        history.pushState(null, null, document.URL)
+        alert(msgs.back_button_msg)
+    })
 })
 
 function grabData(idx1, idx2){
@@ -102,7 +110,13 @@ function success(user){
         updateScoreMongo(user2_data, i)
     }
     $(".end").fadeIn(400)
+    $(".board, .wrapper").css("pointer-events","none")
+    $(".round").css("-webkit-animation-name","none")
 }
+
+// ---------------------------------------------------------
+//                 Update Data in Mongo
+// ---------------------------------------------------------
 
 function updateUserMongo(user_data, isWin){
     let update_data = {}
@@ -162,7 +176,7 @@ function updateScoreMongo(user_data, i){
 }
 
 // ---------------------------------------------------------
-//                      Handle Submit
+//                      Handle Input
 // ---------------------------------------------------------
 
 $(".user1_input").keydown(function(event){
@@ -175,9 +189,36 @@ $(".user2_input").keydown(function(event){
        $(".user2_submit").eq(0).click();
     }
 })
-$(".user1_input, .user2_input").focus(function(){
+$(".user1_input").focus(function(){
+    if (count_this_user != 0 && !user1IsPlaying) {
+        $(this).blur()
+        $(".user2_input").focus()
+        alert(msgs.incomplete_round_msg)
+    }
+    else if (count_this_user == 0 && !user1IsPlaying && user1_data.round != 0) {
+        $(this).blur()
+        $(".user2_input").focus()
+        alert(msgs.switch_player_msg)
+    }
     $(this).val("")
 })
+$(".user2_input").focus(function(){
+    if (count_this_user != 0 && user1IsPlaying) {
+        $(this).blur()
+        $(".user1_input").focus()
+        alert(msgs.incomplete_round_msg)
+    }
+    else if (count_this_user == 0 && user1IsPlaying && user2_data.round != 0) {
+        $(this).blur()
+        $(".user1_input").focus()
+        alert(msgs.switch_player_msg)
+    }
+    $(this).val("")
+})
+
+// ---------------------------------------------------------
+//                      Handle Sumbit
+// ---------------------------------------------------------
 
 $(".user1_submit").click(function(){
     let val = $(".user1_input").val() == "" ? 0 : Number($(".user1_input").val())
@@ -197,7 +238,8 @@ $(".user1_submit").click(function(){
         tag = val
     }
     if (round == 1){
-        $(".user2_input").attr("disabled","disabled");
+        // $(".user2_input").attr("disabled","disabled");
+        user1IsPlaying = true
         $(".user2_submit").css("pointer-events", "none");
     }
     scoreSubmit("user1", "user2", user1_data, val, tag)
@@ -220,7 +262,8 @@ $(".user2_submit").click(function(){
         tag = val
     }
     if (round == 1){
-        $(".user1_input").attr("disabled","disabled");
+        // $(".user1_input").attr("disabled","disabled");
+        user1IsPlaying = false
         $(".user1_submit").css("pointer-events", "none");
     }
     scoreSubmit("user2", "user1", user2_data, val, tag)
@@ -278,11 +321,11 @@ function scoreSubmit(user, the_other_user, user_data, val, tag){
         temp_tags.push(tag)
         updateBoard(user, user_data, val, tag)
         if (count_this_user == 3){
-            lockInputAndSubmit(user, the_other_user)
             updateHisCard(user, false) // boolean: isBust
             updateUserData(user_data, false) // boolean: isBust
             updateDataCard(user, user_data, false) // boolean: isStart
             updateLocalVars()
+            lockInputAndSubmit(user, the_other_user)
         }
     }
     log()
@@ -330,6 +373,7 @@ function updateLocalVars(){
     temp_tags = []
     temp_sum = 0
     count_this_user = 0
+    user1IsPlaying = !user1IsPlaying
 }
 
 function updateBoard(user, user_data, valOnBoard, tag){
@@ -363,10 +407,10 @@ function updateHisCard(user, isBust){
 }
 
 function lockInputAndSubmit(userToLock, userToUnlock){
-    $("."+userToLock+"_input").attr("disabled","disabled");
-    $("."+userToLock+"_submit").css("pointer-events", "none");
-    $("."+userToUnlock+"_input").removeAttr("disabled");
-    $("."+userToUnlock+"_submit").css("pointer-events", "auto");
+    $("."+userToLock+"_input").blur()
+    $("."+userToLock+"_submit").css("pointer-events", "none")
+    $("."+userToUnlock+"_input").focus()
+    $("."+userToUnlock+"_submit").css("pointer-events", "auto")
 }
 
 function log(){
@@ -386,7 +430,7 @@ function log(){
 // ---------------------------------------------------------
 
 $(".play_again").click(function(){
-    location.reload(true);
+    location.reload(true)
 })
 
 $(".end").bind("mousedown", function(event){
