@@ -5,7 +5,7 @@ const app = express()
 const mongoose = require('mongoose')
 const ejs = require('ejs')
 
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
 const db = mongoose.connection
 db.on('error', (error) => console.error(error))
 db.once('open', () => console.log('Connected to Database'))
@@ -15,6 +15,10 @@ app.use(express.static(__dirname + '/public'))
 
 app.engine('html', ejs.__express)
 app.set('view engine', 'html')
+
+const bodyParser = require('body-parser')
+var parseUrlencoded = bodyParser.urlencoded({ extended: true })
+// app.use(bodyParser.urlencoded({ extended: true }))
 
 const indexRouter = require('./routes/')
 const usersRouter = require('./routes/users')

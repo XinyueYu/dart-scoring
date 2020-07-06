@@ -1,6 +1,7 @@
 var user1_data = {
     scores: [],
     tags: [],
+    scores_n_tags: [],
     score: 301,
     temp_score: 301,
     round: 0
@@ -8,6 +9,7 @@ var user1_data = {
 var user2_data = {
     scores: [],
     tags: [],
+    scores_n_tags: [],
     score: 301,
     temp_score: 301,
     round: 0
@@ -103,12 +105,8 @@ function success(user){
         $("#winner").text(user2_data.name)
         $("#winner").css("color", user2_theme_color)
     }
-    for(let i = 0; i < user1_data.scores.length; i++){
-        updateScoreMongo(user1_data, i)
-    }
-    for(let i = 0; i < user2_data.scores.length; i++){
-        updateScoreMongo(user2_data, i)
-    }
+    updateScoreMongo(user1_data)
+    updateScoreMongo(user2_data)
     $(".end").fadeIn(400)
     $(".board, .wrapper").css("pointer-events","none")
     $(".round").css("-webkit-animation-name","none")
@@ -152,25 +150,27 @@ function updateUserMongo(user_data, isWin){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(res) {
-            console.log("Update user:"+user_data._id+" successfully")
+            console.log("Update user "+user_data.name+" successfully")
         }
     })
 }
 
-function updateScoreMongo(user_data, i){
+function updateScoreMongo(user_data){
+    let update_data = {}
+    update_data["name"] = user_data._id
+    update_data["game"] = user_data.total_count // Already incremented
+    update_data["scores"] = user_data.scores_n_tags
+
     $.ajax({
-        url: '/scores/' + user_data.scoreId,
-        type: 'PATCH',
+        url: '/scores',
+        type: 'POST',
         data: JSON.stringify({
-            "scores": {
-                "score": user_data.scores[i],
-                "tag": user_data.tags[i]
-            }
+            update_data
         }),
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(res) {
-            console.log("Update score:"+user_data.scoreId+" successfully")
+            console.log("Create new game record for "+user_data.name+"successfully")
         }
     })
 }

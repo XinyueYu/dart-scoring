@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const User = require('../models/user')
+const Score = require('../models/score')
 
 // Getting all
 router.get('/', async (req, res) => {
@@ -43,7 +44,7 @@ router.post('/', async (req, res) => {
     } catch (err) {
         res.status(400).json({ message: err.message })
     }
-  })
+})
 
 // Updating one
 router.patch('/:id', getUser, async (req, res) => {

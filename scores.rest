@@ -43,6 +43,21 @@ Content-Type: application/json
 
 ###
 
+POST http://localhost:3000/scores
+Content-Type: application/json
+
+{
+    "name": "5effe2397601f6b44c81c569",
+    "game": 7,
+    "scores": [
+        [{"score":50,"tag":50},{"score":20,"tag":2},{"score":20,"tag":3}],
+        [{"score":50,"tag":50},{"score":50,"tag":50},{"score":50,"tag":50}],
+        [{"score":1,"tag":1}]
+    ]
+}
+
+###
+
 PATCH http://localhost:3000/scores/5ef7047c11e6eca512610295
 Content-Type: application/json
 

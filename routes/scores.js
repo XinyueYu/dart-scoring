@@ -1,5 +1,8 @@
 const express = require('express')
 const router = express.Router()
+const bodyParser = require('body-parser')
+var parseUrlencoded = bodyParser.urlencoded({ extended: true })
+const User = require('../models/user')
 const Score = require('../models/score')
 
 // Getting all
@@ -18,11 +21,11 @@ router.get('/:id', getScore, async (req, res) => {
 })
 
 // Creating one
-router.post('/', async (req, res) => {
+router.post('/', parseUrlencoded, async (req, res) => {
     const score = new Score({
         name: req.body.name,
-        score_count: 0,
-        scores: []
+        game: req.body.game,
+        scores: req.body.scores
     })
     try {
         const newScore = await score.save()
@@ -37,8 +40,11 @@ router.patch('/:id', getScore, async (req, res) => {
     if (req.body.name != null){
         res.score.name = req.body.name
     }
-    if (req.body.scores != null){
-        res.score.scores.push(req.body.scores)
+    if (req.body.game != null){
+        res.score.game = req.body.game
+    }
+    if (req.body.scores_in_a_round != null){
+        res.score.scores = req.body.scores
     }
     try {
         const updatedScore = await res.score.save()
