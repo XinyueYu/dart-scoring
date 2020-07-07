@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
     const user = new User({
         name: req.body.name,
         win_count: 0,
-        total_count: 0,
+        total_game_count: 0,
         win_rate: null,
         sum: 0,
         total_round_count: 0,
@@ -52,8 +52,8 @@ router.patch('/:id', getUser, async (req, res) => {
         res.user.name = req.body.name
     if (req.body.win_count != null)
         res.user.win_count = req.body.win_count
-    if (req.body.total_count != null)
-        res.user.total_count = req.body.total_count
+    if (req.body.total_game_count != null)
+        res.user.total_game_count = req.body.total_game_count
     if (req.body.win_rate != null)
         res.user.win_rate = req.body.win_rate
     if (req.body.sum != null)

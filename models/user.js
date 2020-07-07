@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
         unique: true
     },
     win_count: Number,
-    total_count: Number,
+    total_game_count: Number,
     win_rate: Number,
     sum: Number,
     total_round_count: Number,
@@ -20,7 +20,13 @@ const userSchema = new mongoose.Schema({
     single: Number,
     missed: Number,
     bust: Number,
-    bullseye: Number
+    bullseye: Number,
+    total_dart_count: Number
+})
+
+userSchema.pre('validate', function (next) {
+    this.total_dart_count = this.triple + this.double + this.single + this.missed + this.bust + this.bullseye
+    next()
 })
 
 module.exports = mongoose.model('User', userSchema)

@@ -1,7 +1,7 @@
 var user1_data = {
     scores: [],
     tags: [],
-    scores_n_tags: [],
+    scores_in_3_darts: [],
     score: 301,
     temp_score: 301,
     round: 0
@@ -9,7 +9,7 @@ var user1_data = {
 var user2_data = {
     scores: [],
     tags: [],
-    scores_n_tags: [],
+    scores_in_3_darts: [],
     score: 301,
     temp_score: 301,
     round: 0
@@ -28,7 +28,9 @@ var msgs = {
     invalid_input_msg: "Invalid number entered.",
     incomplete_round_msg: "Please enter 3 scores before switching player.",
     switch_player_msg: "Please switch player.",
-    back_button_msg: "Game started! You should not leave this page."
+    back_button_msg: "Game started! You should not leave this page.",
+    ajax_user_error_msg: "An error occurs when updating user database!",
+    ajax_score_error_msg: "An error occurs when creating new score!"
 }
 
 // ---------------------------------------------------------
@@ -36,7 +38,7 @@ var msgs = {
 // ---------------------------------------------------------
 
 $(document).ready(function() {
-    grabData(2,3)
+    grabData(0,1)
     window.addEventListener('popstate', function () {
         history.pushState(null, null, document.URL)
         alert(msgs.back_button_msg)
@@ -58,13 +60,6 @@ function grabData(idx1, idx2){
     }).fail(function(status) {
         console.log("failed: " + status)
     })
-
-    $.get("/scores", function(data){
-        user1_data.scoreId = data[idx1]._id
-        user2_data.scoreId = data[idx2]._id
-    }).fail(function(status) {
-        console.log("failed: " + status)
-    })
 }
 
 function updateDataCard(user, user_data, isStart){
@@ -77,11 +72,12 @@ function updateDataCard(user, user_data, isStart){
     }
     $("#data_card_"+userNum+" ul li span").eq(3).text(user_data.max_3_darts)
     $("#data_card_"+userNum+" ul li span").eq(4).text((user_data.avg_3_darts * 1).toFixed(2))
-    $("#data_card_"+userNum+" ul li span").eq(5).text(user_data.double)
-    $("#data_card_"+userNum+" ul li span").eq(6).text(user_data.triple)
-    $("#data_card_"+userNum+" ul li span").eq(7).text(user_data.missed)
-    $("#data_card_"+userNum+" ul li span").eq(8).text(user_data.bust)
-    $("#data_card_"+userNum+" ul li span").eq(9).text(user_data.bullseye)
+    $("#data_card_"+userNum+" ul li span").eq(5).text((user_data.double / user_data.total_dart_count * 100).toFixed(2) + "%")
+    $("#data_card_"+userNum+" ul li span").eq(6).text((user_data.triple / user_data.total_dart_count * 100).toFixed(2) + "%")
+    $("#data_card_"+userNum+" ul li span").eq(7).text((user_data.missed / user_data.total_dart_count * 100).toFixed(2) + "%")
+    $("#data_card_"+userNum+" ul li span").eq(8).text((user_data.bust / user_data.total_dart_count * 100).toFixed(2) + "%")
+    $("#data_card_"+userNum+" ul li span").eq(9).text((user_data.bullseye / user_data.total_dart_count * 100).toFixed(2) + "%")
+    $("#data_card_"+userNum+" ul li span").eq(10).text()
 }
 
 // ---------------------------------------------------------
@@ -130,8 +126,8 @@ function updateUserMongo(user_data, isWin){
         }
         update_data["win_count"] = ++user_data.win_count // Increment first
     }
-    update_data["total_count"] = ++user_data.total_count // Increment first
-    update_data["win_rate"] = user_data.win_count / user_data.total_count
+    update_data["total_game_count"] = ++user_data.total_game_count // Increment first
+    update_data["win_rate"] = user_data.win_count / user_data.total_game_count
     update_data["total_round_count"] = user_data.total_round_count
     update_data["sum"] = user_data.sum
     update_data["avg_3_darts"] = user_data.avg_3_darts
@@ -151,26 +147,31 @@ function updateUserMongo(user_data, isWin){
         contentType: 'application/json; charset=utf-8',
         success: function(res) {
             console.log("Update user "+user_data.name+" successfully")
+        },
+        error: function(res){
+            alert(msgs.ajax_error_msg)
         }
     })
 }
 
 function updateScoreMongo(user_data){
     let update_data = {}
-    update_data["name"] = user_data._id
-    update_data["game"] = user_data.total_count // Already incremented
-    update_data["scores"] = user_data.scores_n_tags
+    update_data["userId"] = user_data._id
+    update_data["scores_in_3_darts"] = user_data.scores_in_3_darts
+    update_data["scores"] = user_data.scores
+    update_data["tags"] = user_data.tags
 
     $.ajax({
         url: '/scores',
         type: 'POST',
-        data: JSON.stringify({
-            update_data
-        }),
+        data: JSON.stringify(update_data),
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(res) {
-            console.log("Create new game record for "+user_data.name+"successfully")
+            console.log("Create new game record for "+user_data.name+" successfully")
+        },
+        error: function(res){
+            alert(msgs.ajax_error_msg)
         }
     })
 }
@@ -293,7 +294,7 @@ function scoreSubmit(user, the_other_user, user_data, val, tag){
         temp_tags = [99]
         count_this_round += (3 - count_this_user)
         updateUserData(user_data, true) // boolean: isBust
-        updateLocalVars()
+        resetLocalVars()
         lockInputAndSubmit(user, the_other_user)
         updateBoard(user, user_data, val, 99)
         updateHisCard(user, true) // boolean: isBust
@@ -324,7 +325,7 @@ function scoreSubmit(user, the_other_user, user_data, val, tag){
             updateHisCard(user, false) // boolean: isBust
             updateUserData(user_data, false) // boolean: isBust
             updateDataCard(user, user_data, false) // boolean: isStart
-            updateLocalVars()
+            resetLocalVars()
             lockInputAndSubmit(user, the_other_user)
         }
     }
@@ -342,11 +343,10 @@ function updateUserData(user_data, isBust){
         user_data.sum += temp_sum
         user_data.avg_3_darts = user_data.sum / user_data.total_round_count
     }
-    for (let i in temp_scores){
-        user_data.scores.push(temp_scores[i])
-    }
+    user_data.scores.push(temp_scores)
+    user_data.tags.push(temp_tags)
+    user_data.scores_in_3_darts.push(temp_sum)
     for (let i in temp_tags){
-        user_data.tags.push(temp_tags[i])
         if (temp_tags[i] == 0){
             user_data.missed++
         }
@@ -368,7 +368,7 @@ function updateUserData(user_data, isBust){
     }
 }
 
-function updateLocalVars(){
+function resetLocalVars(){
     temp_scores = []
     temp_tags = []
     temp_sum = 0

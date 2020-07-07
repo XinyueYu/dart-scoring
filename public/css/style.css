@@ -267,8 +267,8 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     align-items: flex-start;
     justify-content: center;
     flex-grow: 1;
-    padding-bottom: 40px;
-    padding-bottom: 4rem;
+    padding-bottom: 30px;
+    padding-bottom: 3rem;
 }
 .left_panel{
     display: flex;
@@ -362,15 +362,15 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 .data_card p{
     text-align: center;
     border-bottom: 2px solid white;
-    padding-bottom: 4px;
+    padding-bottom: 8px;
     margin-bottom: 4px;
     font-size: 24px;
-    line-height: 30px;
+    line-height: 24px;
     border-bottom: 0.2rem solid white;
-    padding-bottom: 0.4rem;
+    padding-bottom: 0.8rem;
     margin-bottom: 0.4rem;
     font-size: 2.4rem;
-    line-height: 3rem;
+    line-height: 2.4rem;
 }
 .data_scroll{
     overflow-y: auto;

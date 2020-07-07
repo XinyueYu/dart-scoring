@@ -1,7 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const bodyParser = require('body-parser')
-var parseUrlencoded = bodyParser.urlencoded({ extended: true })
 const User = require('../models/user')
 const Score = require('../models/score')
 
@@ -21,12 +19,21 @@ router.get('/:id', getScore, async (req, res) => {
 })
 
 // Creating one
-router.post('/', parseUrlencoded, async (req, res) => {
+router.post('/', getRoundCount, async (req, res) => {
     const score = new Score({
-        name: req.body.name,
-        game: req.body.game,
-        scores: req.body.scores
+        userId: req.body.userId,
+        game: res.total_game_count,
+        scores_in_3_darts: req.body.scores_in_3_darts
     })
+    for (let i = 0; i < req.body.scores.length; i++){
+        score.scores.push([])
+        for (let j = 0; j < req.body.scores[i].length; j++){
+            score.scores[i].push({
+                score: req.body.scores[i][j],
+                tag: req.body.tags[i][j]
+            })
+        }
+    }
     try {
         const newScore = await score.save()
         res.status(201).json(newScore)
@@ -37,14 +44,11 @@ router.post('/', parseUrlencoded, async (req, res) => {
 
 // Updating one
 router.patch('/:id', getScore, async (req, res) => {
-    if (req.body.name != null){
-        res.score.name = req.body.name
+    if (req.body.userId != null){
+        res.score.userId = req.body.userId
     }
-    if (req.body.game != null){
-        res.score.game = req.body.game
-    }
-    if (req.body.scores_in_a_round != null){
-        res.score.scores = req.body.scores
+    if (req.body.round_count != null){
+        res.score.round_count = req.body.round_count
     }
     try {
         const updatedScore = await res.score.save()
@@ -78,5 +82,20 @@ async function getScore(req, res, next) {
     res.score = score
     next()
   }
+
+async function getRoundCount(req, res, next){
+    let user
+    try {
+        user = await User.findById(req.body.userId)
+        if (user == null){
+            return res.status(404).json({ message: 'Cannot find user for this score' })
+        }
+    } catch (err) {
+        return console.log(err.message)
+    }
+
+    res.total_game_count = user.total_game_count
+    next()
+}
 
 module.exports = router

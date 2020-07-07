@@ -16,8 +16,8 @@ app.use(express.static(__dirname + '/public'))
 app.engine('html', ejs.__express)
 app.set('view engine', 'html')
 
-const bodyParser = require('body-parser')
-var parseUrlencoded = bodyParser.urlencoded({ extended: true })
+// const bodyParser = require('body-parser')
+// app.use(bodyParser.json()) 
 // app.use(bodyParser.urlencoded({ extended: true }))
 
 const indexRouter = require('./routes/')

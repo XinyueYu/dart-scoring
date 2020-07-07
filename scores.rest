@@ -47,27 +47,21 @@ POST http://localhost:3000/scores
 Content-Type: application/json
 
 {
-    "name": "5effe2397601f6b44c81c569",
-    "game": 7,
-    "scores": [
-        [{"score":50,"tag":50},{"score":20,"tag":2},{"score":20,"tag":3}],
-        [{"score":50,"tag":50},{"score":50,"tag":50},{"score":50,"tag":50}],
-        [{"score":1,"tag":1}]
-    ]
+    "userId": "5ef85bf91140f8f382ea5345",
+    "scores": [[50,50,50],[50,20,20],[1]],
+    "tags": [[50,50,50],[50,2,3],[1]],
+    "scores_in_3_darts": [150,150,1]
 }
 
 ###
 
-PATCH http://localhost:3000/scores/5ef7047c11e6eca512610295
+PATCH http://localhost:3000/scores/5f030fdc0e496677db19154b
 Content-Type: application/json
 
 {
-    "scores": {
-        "score": 10,
-        "tag": 2
-    }
+    "game": 2
 }
 
 ###
 
-DELETE http://localhost:3000/scores/5ef828d03a10ece6702fea92
+DELETE http://localhost:3000/scores/5f03077fd60726745abb8565

@@ -2,6 +2,10 @@ GET http://localhost:3000/users
 
 ###
 
+GET http://localhost:3000/users/5ef85be81140f8f382ea5343
+
+###
+
 POST http://localhost:3000/users
 Content-Type: application/json
 
@@ -38,11 +42,10 @@ Content-Type: application/json
 
 ###
 
-PATCH http://localhost:3000/users/5ef7040a11e6eca512610291
+PATCH http://localhost:3000/users/5ef85bf01140f8f382ea5344
 Content-Type: application/json
 
 {
-    "max_3_darts": 0
 }
 
 ###
