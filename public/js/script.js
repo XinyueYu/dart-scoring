@@ -4,7 +4,7 @@ var user1_data = {
     scores_in_3_darts: [],
     score: 301,
     temp_score: 301,
-    round: 0
+    round: 0,
 }
 var user2_data = {
     scores: [],
@@ -12,7 +12,7 @@ var user2_data = {
     scores_in_3_darts: [],
     score: 301,
     temp_score: 301,
-    round: 0
+    round: 0,
 }
 var temp_scores = [] // scores of three darts in this round
 var temp_tags = [] // scores of three tags in this round
@@ -21,6 +21,7 @@ var round = 1
 var count_this_round = 0 // 0 to 6
 var count_this_user = 0 // 0 to 3
 var user1IsPlaying = false
+var success_count = 0
 var user1_theme_color = "firebrick"
 var user2_theme_color = "forestgreen"
 var msgs = {
@@ -30,7 +31,8 @@ var msgs = {
     switch_player_msg: "Please switch player.",
     back_button_msg: "Game started! You should not leave this page.",
     ajax_user_error_msg: "An error occurs when updating user database!",
-    ajax_score_error_msg: "An error occurs when creating new score!"
+    ajax_score_error_msg: "An error occurs when creating new score!",
+    wait: "Data upload is not finished yet."
 }
 
 // ---------------------------------------------------------
@@ -38,7 +40,7 @@ var msgs = {
 // ---------------------------------------------------------
 
 $(document).ready(function() {
-    grabData(0,1)
+    grabData(2,3)
     window.addEventListener('popstate', function () {
         history.pushState(null, null, document.URL)
         alert(msgs.back_button_msg)
@@ -53,6 +55,8 @@ function grabData(idx1, idx2){
         for (let i in data[idx2]){
             user2_data[i] = data[idx2][i]
         }
+        console.log(user1_data)
+        console.log(user2_data)
         updateDataCard("user1", user1_data, true)
         updateDataCard("user2", user2_data, true)
         $(".user1_board p, #user_name_1").text(user1_data.name)
@@ -62,22 +66,36 @@ function grabData(idx1, idx2){
     })
 }
 
+// function toMap(user_data){
+//     var result = user_data.spot_count.reduce(function(map, obj) {
+//         map[obj._id] = obj.count;
+//         return map;
+//     }, {});
+//     user_data.spot_count = result
+// }
+// function toMap(user_data){
+//     let map = new Map()
+//     user_data.spot_count.forEach(obj => map.set(obj._id, obj.count))
+//     user_data.spot_count = map
+// }
+
 function updateDataCard(user, user_data, isStart){
-    let userNum
-    user == "user1" ? userNum = 1 : userNum = 2
+    if (user_data.total_dart_count == 0 && user_data.total_round_count == 0 && user_data.total_game_count == 0) return
+    let num = (user == "user1") ? 1 : 2
     if (isStart){
-        $("#data_card_"+userNum+" ul li span").eq(0).text((user_data.win_rate * 100).toFixed(2) + "%")
-        $("#data_card_"+userNum+" ul li span").eq(1).text(user_data.win_min_round)
-        $("#data_card_"+userNum+" ul li span").eq(2).text((user_data.win_avg_round * 1).toFixed(2))
+        $("#data_card_"+num+" ul li span").eq(0).text((user_data.win_rate * 100).toFixed(2) + "%")
+        if (user_data.win_rate != 0) {
+            $("#data_card_"+num+" ul li span").eq(1).text(user_data.win_min_round)
+            $("#data_card_"+num+" ul li span").eq(2).text((user_data.win_avg_round * 1).toFixed(2))
+        }
+        $("#data_card_"+num+" ul li span").eq(3).text(user_data.spots.toString().replace(/,/g, ', '))
     }
-    $("#data_card_"+userNum+" ul li span").eq(3).text(user_data.max_3_darts)
-    $("#data_card_"+userNum+" ul li span").eq(4).text((user_data.avg_3_darts * 1).toFixed(2))
-    $("#data_card_"+userNum+" ul li span").eq(5).text((user_data.double / user_data.total_dart_count * 100).toFixed(2) + "%")
-    $("#data_card_"+userNum+" ul li span").eq(6).text((user_data.triple / user_data.total_dart_count * 100).toFixed(2) + "%")
-    $("#data_card_"+userNum+" ul li span").eq(7).text((user_data.missed / user_data.total_dart_count * 100).toFixed(2) + "%")
-    $("#data_card_"+userNum+" ul li span").eq(8).text((user_data.bust / user_data.total_dart_count * 100).toFixed(2) + "%")
-    $("#data_card_"+userNum+" ul li span").eq(9).text((user_data.bullseye / user_data.total_dart_count * 100).toFixed(2) + "%")
-    $("#data_card_"+userNum+" ul li span").eq(10).text()
+    $("#data_card_"+num+" ul li span").eq(4).text(user_data.max_3_darts)
+    $("#data_card_"+num+" ul li span").eq(5).text((user_data.avg_3_darts * 1).toFixed(2))
+    $("#data_card_"+num+" ul li span").eq(6).text((user_data.double / user_data.total_dart_count * 100).toFixed(2) + "%")
+    $("#data_card_"+num+" ul li span").eq(7).text((user_data.triple / user_data.total_dart_count * 100).toFixed(2) + "%")
+    $("#data_card_"+num+" ul li span").eq(8).text((user_data.missed / user_data.total_dart_count * 100).toFixed(2) + "%")
+    $("#data_card_"+num+" ul li span").eq(9).text((user_data.bullseye / user_data.total_dart_count * 100).toFixed(2) + "%")
 }
 
 // ---------------------------------------------------------
@@ -86,23 +104,25 @@ function updateDataCard(user, user_data, isStart){
 
 function success(user){
     if (user == "user1"){
-        updateUserMongo(user1_data, true)
-        updateUserMongo(user2_data, false)
+        updateUserMongo(user1_data, true) // isWin
+        updateUserMongo(user2_data, false) // isWin
+        updateScoreMongo(user1_data, user2_data, true) // isWin
+        updateScoreMongo(user2_data, user1_data, false) // isWin
         $(".end").css("border", "4px solid "+user1_theme_color)
         $(".play_again").css("background-color", user1_theme_color)
         $("#winner").text(user1_data.name)
         $("#winner").css("color", user1_theme_color)
     }
     else{
-        updateUserMongo(user1_data, false)
-        updateUserMongo(user2_data, true)
+        updateUserMongo(user1_data, false) // isWin
+        updateUserMongo(user2_data, true) // isWin
+        updateScoreMongo(user1_data, user2_data, false) // isWin
+        updateScoreMongo(user2_data, user1_data, true) //isWin
         $(".end").css("border", "4px solid "+user2_theme_color)
         $(".play_again").css("background-color", user2_theme_color)
         $("#winner").text(user2_data.name)
         $("#winner").css("color", user2_theme_color)
     }
-    updateScoreMongo(user1_data)
-    updateScoreMongo(user2_data)
     $(".end").fadeIn(400)
     $(".board, .wrapper").css("pointer-events","none")
     $(".round").css("-webkit-animation-name","none")
@@ -138,6 +158,7 @@ function updateUserMongo(user_data, isWin){
     update_data["missed"] = user_data.missed
     update_data["bust"] = user_data.bust
     update_data["bullseye"] = user_data.bullseye
+    update_data["total_dart_count"] = user_data.total_dart_count
 
     $.ajax({
         url: '/users/' + user_data._id,
@@ -146,20 +167,25 @@ function updateUserMongo(user_data, isWin){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(res) {
+            success_count++
             console.log("Update user "+user_data.name+" successfully")
         },
         error: function(res){
-            alert(msgs.ajax_error_msg)
+            alert(msgs.ajax_user_error_msg)
         }
     })
 }
 
-function updateScoreMongo(user_data){
+function updateScoreMongo(user_data, rival_user_data, isWin){
     let update_data = {}
     update_data["userId"] = user_data._id
+    update_data["rival_userId"] = rival_user_data._id
+    update_data["game"] = user_data.total_game_count
+    update_data["total_score"] = 301 - user_data.temp_score
     update_data["scores_in_3_darts"] = user_data.scores_in_3_darts
     update_data["scores"] = user_data.scores
     update_data["tags"] = user_data.tags
+    update_data["isWin"] = isWin
 
     $.ajax({
         url: '/scores',
@@ -168,10 +194,11 @@ function updateScoreMongo(user_data){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(res) {
+            success_count++
             console.log("Create new game record for "+user_data.name+" successfully")
         },
         error: function(res){
-            alert(msgs.ajax_error_msg)
+            alert(msgs.ajax_score_error_msg)
         }
     })
 }
@@ -222,7 +249,7 @@ $(".user2_input").focus(function(){
 // ---------------------------------------------------------
 
 $(".user1_submit").click(function(){
-    let val = $(".user1_input").val() == "" ? 0 : Number($(".user1_input").val())
+    let val = ($(".user1_input").val() == "") ? 0 : Number($(".user1_input").val())
     if (checkVal(val)) return alert(msgs.invalid_input_msg)
     let tag = 1
     if ($(this).attr("id") == "user1_submit_2"){
@@ -239,14 +266,13 @@ $(".user1_submit").click(function(){
         tag = val
     }
     if (round == 1){
-        // $(".user2_input").attr("disabled","disabled");
         user1IsPlaying = true
         $(".user2_submit").css("pointer-events", "none");
     }
     scoreSubmit("user1", "user2", user1_data, val, tag)
 })
 $(".user2_submit").click(function(){
-    let val = $(".user2_input").val() == "" ? 0 : Number($(".user2_input").val())
+    let val = ($(".user2_input").val() == "") ? 0 : Number($(".user2_input").val())
     if (checkVal(val)) return alert(msgs.invalid_input_msg)
     let tag = 1
     if ($(this).attr("id") == "user2_submit_2"){
@@ -263,7 +289,6 @@ $(".user2_submit").click(function(){
         tag = val
     }
     if (round == 1){
-        // $(".user1_input").attr("disabled","disabled");
         user1IsPlaying = false
         $(".user1_submit").css("pointer-events", "none");
     }
@@ -328,6 +353,9 @@ function scoreSubmit(user, the_other_user, user_data, val, tag){
             resetLocalVars()
             lockInputAndSubmit(user, the_other_user)
         }
+        else{
+            $("."+user+"_input").focus()
+        }
     }
     log()
 }
@@ -339,6 +367,7 @@ function updateUserData(user_data, isBust){
         user_data.max_3_darts = temp_sum
     }
     if (!isBust) {
+        user_data.total_dart_count += temp_scores.length
         user_data.total_round_count++
         user_data.sum += temp_sum
         user_data.avg_3_darts = user_data.sum / user_data.total_round_count
@@ -365,6 +394,38 @@ function updateUserData(user_data, isBust){
         else if (temp_tags[i] == 99){
             user_data.bust++
         }
+    }
+    // if (!isBust) {
+    //     for (let i in temp_scores){
+    //         user_data.spot_count[temp_scores[i]] = (user_data.spot_count[temp_scores[i]] == undefined) ? 1 : user_data.spot_count[temp_scores[i]]+1
+    //     }
+    //     let arr_for_sort = []
+    //     for (let i in user_data.spots){
+    //         arr_for_sort.push({
+    //             key: user_data.spots[i],
+    //             value: user_data.spot_count[user_data.spots[i]]
+    //         })
+    //     }
+    //     for (let i in temp_scores){
+    //         arr_for_sort.push({
+    //             key: user_data.temp_scores[i],
+    //             value: user_data.spot_count[user_data.temp_scores[i]]
+    //         })
+    //     }
+    //     arr_for_sort.sort((a,b) => b.value - a.value)
+    //     user_data.spots = arr_for_sort
+    // }
+}
+
+// Not Using
+function fetchHighestThree(user_data){
+    if (user_data.spot_count.length != 0) {
+        user_data.spot_count.sort((a,b) => (b.count - a.count))
+        let arr = []
+        for (let i = 0; i < 3 && i < user_data.spot_count.length; i++){
+            arr.push(user_data.spot_count[i]._id)
+        }
+        return arr
     }
 }
 
@@ -430,7 +491,8 @@ function log(){
 // ---------------------------------------------------------
 
 $(".play_again").click(function(){
-    location.reload(true)
+    if (success_count == 4) location.reload(true)
+    else alert(msgs.wait)
 })
 
 $(".end").bind("mousedown", function(event){

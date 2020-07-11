@@ -19,10 +19,14 @@ router.get('/:id', getScore, async (req, res) => {
 })
 
 // Creating one
-router.post('/', getRoundCount, async (req, res) => {
+router.post('/', getUser, async (req, res) => {
+
     const score = new Score({
         userId: req.body.userId,
-        game: res.total_game_count,
+        rival_userId: req.body.rival_userId,
+        game: req.body.game,
+        isWin: req.body.isWin,
+        total_score: req.body.total_score,
         scores_in_3_darts: req.body.scores_in_3_darts
     })
     for (let i = 0; i < req.body.scores.length; i++){
@@ -35,20 +39,67 @@ router.post('/', getRoundCount, async (req, res) => {
         }
     }
     try {
-        const newScore = await score.save()
-        res.status(201).json(newScore)
+        // const newScore = await score.save()
+        // res.status(201).json(newScore)
+        await score.save()
     } catch (err) {
         res.status(400).json({ message: err.message })
     }
-  })
+
+    let highest_three = []
+    let spots
+    try {
+        spots = await Score.aggregate([
+            {
+                $match: { userId: res.user._id }
+            },{
+                $project: { _id: 0, scores: 1 }
+            },{
+                $unwind: '$scores'
+            },{
+                $unwind: '$scores'
+            },{
+                $match: { "scores.tag" : { $ne: 99 } }
+            },{
+                $sortByCount: '$scores.score'
+            }
+        ])
+        for (let i = 0; i < 3 && i < spots.length; i++) {
+            highest_three.push(spots[i]._id)
+        }
+    } catch (err) {
+        return res.json({ message: err.message })
+    }
+
+    if (spots.length != 0){
+        res.user.spots = highest_three
+        res.user.spot_count = spots.sort((a,b) => (a._id - b._id))
+    }
+    try {
+        const updatedUser = await res.user.save()
+        res.json(updatedUser)
+    } catch (err) {
+        return res.status(400).json({ message: err.message })
+    }
+
+})
 
 // Updating one
 router.patch('/:id', getScore, async (req, res) => {
     if (req.body.userId != null){
         res.score.userId = req.body.userId
     }
-    if (req.body.round_count != null){
-        res.score.round_count = req.body.round_count
+    if (req.body.rival_userId != null){
+        res.score.rival_userId = req.body.rival_userId
+    }
+    if (req.body.isWin != null){
+        res.score.isWin = req.body.isWin
+    }
+    if (req.body.total_score != null){
+        res.score.total_score = req.body.total_score
+    }
+    if (req.body.scores_in_3_darts != null){
+        res.score.scores_in_3_darts = req.body.scores_in_3_darts
     }
     try {
         const updatedScore = await res.score.save()
@@ -83,7 +134,7 @@ async function getScore(req, res, next) {
     next()
   }
 
-async function getRoundCount(req, res, next){
+async function getUser(req, res, next){
     let user
     try {
         user = await User.findById(req.body.userId)
@@ -93,8 +144,8 @@ async function getRoundCount(req, res, next){
     } catch (err) {
         return console.log(err.message)
     }
-
-    res.total_game_count = user.total_game_count
+    
+    res.user = user
     next()
 }
 

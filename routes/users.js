@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const User = require('../models/user')
 const Score = require('../models/score')
+const mongoose = require('mongoose')
 
 // Getting all
 router.get('/', async (req, res) => {
@@ -22,21 +23,6 @@ router.get('/:id', getUser, async (req, res) => {
 router.post('/', async (req, res) => {
     const user = new User({
         name: req.body.name,
-        win_count: 0,
-        total_game_count: 0,
-        win_rate: null,
-        sum: 0,
-        total_round_count: 0,
-        win_min_round: null,
-        win_avg_round: null,
-        max_3_darts: 0,
-        avg_3_darts: null,
-        triple: 0,
-        double: 0,
-        single: 0,
-        missed: 0,
-        bust: 0,
-        bullseye: 0
     })
     try {
         const newUser = await user.save()
@@ -80,6 +66,8 @@ router.patch('/:id', getUser, async (req, res) => {
         res.user.bullseye = req.body.bullseye
     if (req.body.bust != null) 
         res.user.bust = req.body.bust
+    if (req.body.total_dart_count != null) 
+        res.user.total_dart_count = req.body.total_dart_count
     try {
         const updatedUser = await res.user.save()
         res.json(updatedUser)

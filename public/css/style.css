@@ -42,6 +42,21 @@ body{
     min-height: 100vh;
     font-family: Arial;
     user-select: none;  
+    /* background-color: rosybrown;
+    background-image: linear-gradient(90deg, rgba(255,255,255,.07) 50%, transparent 50%),
+    linear-gradient(90deg, rgba(255,255,255,.13) 50%, transparent 50%),
+    linear-gradient(90deg, transparent 50%, rgba(255,255,255,.17) 50%),
+    linear-gradient(90deg, transparent 50%, rgba(255,255,255,.19) 50%);
+    background-size: 13px, 29px, 37px, 53px; */
+    background:
+    radial-gradient(#8c6026 4px, transparent 0px),
+    radial-gradient(#8c6026 4px, transparent 0px),
+    linear-gradient(burlywood 4px, transparent 0px),
+    linear-gradient(45deg, transparent 74px, transparent 75px, #64451b 75px, #64451b 76px, transparent 77px, transparent 109px),
+    linear-gradient(-45deg, transparent 75px, transparent 76px, #64451b 76px, #64451b 77px, transparent 78px, transparent 109px),
+    burlywood;
+    background-size: 109px 109px, 109px 109px,100% 6px, 109px 109px, 109px 109px;
+    background-position: 54px 55px, 0px 0px, 0px 0px, 0px 0px, 0px 0px;
 }
 p{
     margin: 0;
@@ -108,21 +123,21 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     background-color: linen;
 }
 .board, .round, .user1_input, .user2_input, .user1_submit, .user2_submit, .play_again{
-    border-radius: 20px;
+    border-radius: 16px;
     box-shadow: 2px 2px 2px grey;
-    border-radius: 2rem;
+    border-radius: 1.6rem;
     box-shadow: 0.2rem 0.2rem 0.2rem grey;
 }
 #score_card_1, #data_card_1, #history_card_1{
-    border-radius: 20px;
+    border-radius: 16px;
     box-shadow: 2px 2px 4px #660000;
-    border-radius: 2rem;
+    border-radius: 1.6rem;
     box-shadow: 0.2rem 0.2rem 0.4rem #660000;
 }
 #score_card_2, #data_card_2, #history_card_2{
-    border-radius: 20px;
+    border-radius: 16px;
     box-shadow: 2px 2px 4px #38471f;
-    border-radius: 2rem;
+    border-radius: 1.6rem;
     box-shadow: 0.2rem 0.2rem 0.4rem #38471f;
 }
 
@@ -160,13 +175,13 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     top: 20px;
     width: 442px;
     height: 100px;
-    border-radius: 20px;
+    border-radius: 16px;
     padding: 0 10px;
     left: 2rem;
     top: 2rem;
     width: 44.2rem;
     height: 10rem;
-    border-radius: 2rem;
+    border-radius: 1.6rem;
     padding: 0 1rem;
 }
 .board_wrap{
@@ -184,16 +199,16 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     height: 36px;
     line-height: 36px;
     font-size: 24px;
-    border-radius: 20px;
+    border-radius: 16px;
     height: 3.6rem;
     line-height: 3.6rem;
     font-size: 2.4rem;
-    border-radius: 2rem;
+    border-radius: 1.6rem;
 }
 .user1_board p, .user2_board p{
-    border-radius: 20px;
+    border-radius: 16px;
     width: 120px;
-    border-radius: 2rem;
+    border-radius: 1.6rem;
     width: 12rem;
 }
 .user1_board ul li, .user2_board ul li{
@@ -232,21 +247,6 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 
 .wrapper{
     display: flex;
-    /* background-color: rosybrown;
-    background-image: linear-gradient(90deg, rgba(255,255,255,.07) 50%, transparent 50%),
-    linear-gradient(90deg, rgba(255,255,255,.13) 50%, transparent 50%),
-    linear-gradient(90deg, transparent 50%, rgba(255,255,255,.17) 50%),
-    linear-gradient(90deg, transparent 50%, rgba(255,255,255,.19) 50%);
-    background-size: 13px, 29px, 37px, 53px; */
-    background:
-    radial-gradient(#8c6026 4px, transparent 0px),
-    radial-gradient(#8c6026 4px, transparent 0px),
-    linear-gradient(burlywood 4px, transparent 0px),
-    linear-gradient(45deg, transparent 74px, transparent 75px, #64451b 75px, #64451b 76px, transparent 77px, transparent 109px),
-    linear-gradient(-45deg, transparent 75px, transparent 76px, #64451b 76px, #64451b 77px, transparent 78px, transparent 109px),
-    burlywood;
-    background-size: 109px 109px, 109px 109px,100% 6px, 109px 109px, 109px 109px;
-    background-position: 54px 55px, 0px 0px, 0px 0px, 0px 0px, 0px 0px;
 }
 .panel{
     display: flex;
@@ -261,14 +261,14 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 .main_wrap{
     display: flex;
     flex-grow: 4;
+    max-height: 88%;
 }
 .input_wrap{
     display: flex;
     align-items: flex-start;
     justify-content: center;
     flex-grow: 1;
-    padding-bottom: 30px;
-    padding-bottom: 3rem;
+    min-height: 12%;
 }
 .left_panel{
     display: flex;
@@ -287,9 +287,9 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     align-items: center;
     flex-grow: 1;
     margin: 20px;
-    padding: 10px 20px;
+    padding: 10px 15px;
     margin: 2rem;
-    padding: 1rem 2rem;
+    padding: 1rem 1.5rem;
 }
 .data_card{
     display: flex;
@@ -297,11 +297,11 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     flex-grow: 4;
     overflow-y: auto;
     margin: 0 20px 20px 20px;
-    padding: 10px 20px;
+    padding: 10px 15px;
     font-size: 20px;
     line-height: 24px;
     margin: 0 2rem 2rem 2rem;
-    padding: 1rem 2rem;
+    padding: 1rem 1.5rem;
     font-size: 2rem;
     line-height: 2.4rem;
 }
@@ -313,23 +313,23 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     min-width: 232px;
     margin: 140px 20px 20px 0;
     font-size: 24px;
-    padding: 10px 20px 20px 20px;
+    padding: 10px 15px 15px 15px;
     line-height: 30px;
     min-width: 23.2rem;
     margin: 14rem 2rem 2rem 0;
     font-size: 2.4rem;
-    padding: 1rem 2rem 2rem 2rem;
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
     line-height: 3rem;
 }
 
 .user_name{
     background-color: linen;
     line-height: 40px;
-    border-radius: 20px;
+    border-radius: 16px;
     padding-left: 10px;
     padding-right: 10px;
     line-height: 4rem;
-    border-radius: 2rem;
+    border-radius: 1.6rem;
     padding-left: 1rem;
     padding-right: 1rem;
 }
@@ -363,14 +363,16 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     text-align: center;
     border-bottom: 2px solid white;
     padding-bottom: 8px;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
     font-size: 24px;
     line-height: 24px;
     border-bottom: 0.2rem solid white;
     padding-bottom: 0.8rem;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
     font-size: 2.4rem;
     line-height: 2.4rem;
+    font-size: 1.8vw;
+    line-height: 1.8vw;
 }
 .data_scroll{
     overflow-y: auto;
@@ -433,11 +435,11 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     font-size: 32px;
     width: 500px;
     height: 300px;
-    border-radius: 20px;
+    border-radius: 16px;
     font-size: 3.2rem;
     width: 50rem;
     height: 30rem;
-    border-radius: 2rem;
+    border-radius: 1.6rem;
 }
 .end_wrap{
     display: flex;

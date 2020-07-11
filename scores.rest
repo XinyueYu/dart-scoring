@@ -2,7 +2,7 @@ GET http://localhost:3000/scores
 
 ###
 
-GET http://localhost:3000/scores/5ef67a93132c3a76fd7b455a
+GET http://localhost:3000/scores/5ef85be81140f8f382ea5343
 
 ###
 
@@ -47,10 +47,13 @@ POST http://localhost:3000/scores
 Content-Type: application/json
 
 {
-    "userId": "5ef85bf91140f8f382ea5345",
-    "scores": [[50,50,50],[50,20,20],[1]],
-    "tags": [[50,50,50],[50,2,3],[1]],
-    "scores_in_3_darts": [150,150,1]
+    "userId": "5f05231063e0fd5222d26af4",
+    "rival_userId": "5f05230e63e0fd5222d26af3",
+    "scores": [[50,50,50],[50,20,20],[0],[1]],
+    "tags": [[50,50,50],[50,2,3],[99],[1]],
+    "scores_in_3_darts": [150,150,0,1],
+    "total_score": 301,
+    "isWin": true
 }
 
 ###

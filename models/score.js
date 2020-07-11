@@ -20,16 +20,18 @@ const scoreSchema = new mongoose.Schema({
         ref: 'User',
         require: true
     },
+    rival_userId: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        require: true
+    },
     game: Number,
+    isWin: Boolean,
+    total_score: Number,
     scores: [[singleScoreSchema]],
     scores_in_3_darts: [Number]
 },{
     timestamps: {createdAt: true, updatedAt: false } // When you call Date#toString(), the JavaScript runtime will use your OS' timezone.
 })
-
-// scoreSchema.pre('validate', function (next) {
-//     this.score_count = this.scores.length
-//     next()
-// })
 
 module.exports = mongoose.model('Score', scoreSchema)
